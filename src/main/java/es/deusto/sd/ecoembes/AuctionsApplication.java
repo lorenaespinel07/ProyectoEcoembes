@@ -5,7 +5,6 @@
  */
 package es.deusto.sd.ecoembes;
 
-import es.deusto.sd.ecoembes.entity.Estado;
 import es.deusto.sd.ecoembes.facade.AuctionsController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

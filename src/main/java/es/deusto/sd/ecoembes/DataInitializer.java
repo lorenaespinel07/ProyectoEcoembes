@@ -14,9 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import es.deusto.sd.ecoembes.entity.Article;
-import es.deusto.sd.ecoembes.entity.Category;
-import es.deusto.sd.ecoembes.entity.User;
+
 import es.deusto.sd.ecoembes.service.AuctionsService;
 import es.deusto.sd.ecoembes.service.AuthService;
 
