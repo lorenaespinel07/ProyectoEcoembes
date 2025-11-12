@@ -24,6 +24,12 @@ public class EcoService {
 	private static Map<Long, List<InfoPlanta>> dbInfoPlanta = new HashMap<>();
 	private static Map<Long, Contenedor> dbContenedor = new HashMap<>();
 	private static Map<Long, List<InfoContenedor>> dbInfoContenedor = new HashMap<>();
+	
+
+	public Map<String, Personal> getDbTokensActivos() {
+		return dbTokensActivos;
+	}
+	
 	//Funciones para llenar la base de datos
 	public void addPersonal(Personal p) {
 		dbPersonal.put(p.getEmail(), p);
@@ -222,7 +228,7 @@ public class EcoService {
 			List<InfoPlanta> listaInfo = dbInfoPlanta.get(planta.getIdplanta());
 			if (listaInfo != null) {
 				for(InfoPlanta plantaInfo : listaInfo) { 
-					if (plantaInfo.getCapacidadActual() + envaseTotales <= plantaInfo.getPlanta().getCapacidad()) {
+					if (plantaInfo.getCapacidadActual()* 1000 + envaseTotales <= plantaInfo.getPlanta().getCapacidad()* 1000) {
 						//Asignación exitosa
 						plantaAsignada = planta;
 						Asignacion asignacion = new Asignacion(contenedoresAsignados, plantaAsignada, personal, new Date());
@@ -256,7 +262,8 @@ public class EcoService {
 	private static synchronized boolean validarToken(String token) {
 		return dbTokensActivos.containsKey(token);
 	}
-	
+
+
 	
 	
 

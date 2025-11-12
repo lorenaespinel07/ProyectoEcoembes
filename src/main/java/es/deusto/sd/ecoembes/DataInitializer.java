@@ -5,8 +5,10 @@
  */
 package es.deusto.sd.ecoembes;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,55 +16,104 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import es.deusto.sd.ecoembes.entity.Personal;
+
+import es.deusto.sd.ecoembes.entity.*;
 import es.deusto.sd.ecoembes.service.EcoService;
 
 @Configuration
 public class DataInitializer {
 
+    private final EcoApplication ecoApplication;
+
 	private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
+
+    DataInitializer(EcoApplication ecoApplication) {
+        this.ecoApplication = ecoApplication;
+    }
 	
     @Bean
     CommandLineRunner initData(EcoService ecoservice) {
 		return args -> {
-			Personal p1 = new Personal("admin@ecoembes.com", "hash_de_1234", "Admin User");
-            appService.addPersonal(p1);
-            PersonalEcoembes p2 = new PersonalEcoembes("user@ecoembes.com", "hash_de_5678", "Regular User");
-            appService.addPersonal(p2);
+			Personal p1 = new Personal(12345 ,"Paquito el pro","admin@ecoembes.com", "ojolero" );
+            ecoservice.addPersonal(p1);
+            Personal p2 = new Personal(9876,"user@ecoembes.com", "sincontraseña", "Regular User");
+            ecoservice.addPersonal(p2);
+            
+            Token token1 = new Token("1236gty18ty", p1);
+            ecoservice.addTokenActivo(token1.getToken(), p1);
+            Token token2 = new Token("9876yhn54gh", p2);
+            ecoservice.addTokenActivo(token2.getToken(), p2);
+            
+            System.out.println(ecoservice.getDbTokensActivos().keySet());
 
             // Crear contenedores de prueba
-            Contenedor c1 = new Contenedor("C-001", new Ubicacion("Calle Falsa 123", "48001"), 1000.0);
-            Contenedor c2 = new Contenedor("C-002", new Ubicacion("Avenida Principal 45", "48001"), 1000.0);
-            Contenedor c3 = new Contenedor("C-003", new Ubicacion("Plaza Nueva 1", "48002"), 800.0);
-            appService.addContenedor(c1);
-            appService.addContenedor(c2);
-            appService.addContenedor(c3);
-            // Crear historiales de actualizaciones (con datos de ayer y hoy)
-            ArrayList<ActualizacionContenedor> actualizacionesc1 = new ArrayList<>(List.of(
-                    new ActualizacionContenedor(Timestamp.valueOf(LocalDate.now().minusDays(1).atStartOfDay()), 100, EstadoLlenado.VERDE, c1.getIdentificador())
-            ));
-            appService.addActualizaciones(c1, actualizacionesc1);
-            ArrayList<ActualizacionContenedor> actualizacionesc2 = new ArrayList<>(List.of(
-                    new ActualizacionContenedor(Timestamp.valueOf(LocalDate.now().minusDays(1).atStartOfDay()), 500, EstadoLlenado.NARANJA, c2.getIdentificador())
-            ));
-            appService.addActualizaciones(c2, actualizacionesc2);
-            appService.addActualizaciones(c3, new ArrayList<ActualizacionContenedor>());
+            Contenedor c1 = new Contenedor(11234, "Calle de los muertos", "4001", 1000);
+            Contenedor c2 = new Contenedor(3488, "Avenida Principal 45", "4001", 2000);
+            Contenedor c3 = new Contenedor(87678, "Plaza Nueva 1", "4802", 800);
+            ecoservice.addContenedor(c1);
+            ecoservice.addContenedor(c2);
+            ecoservice.addContenedor(c3);
+            
+            //Fecha con calendar
+            Calendar cal = Calendar.getInstance();
+            cal.set(2025, Calendar.NOVEMBER, 12, 3, 00);
+            
+            Calendar cal2 = Calendar.getInstance();
+            cal2.set(2025, Calendar.SEPTEMBER, 13, 3, 00);
+            
+            Calendar cal3 = Calendar.getInstance();
+            cal3.set(2025, Calendar.APRIL, 14, 3, 00);
+            
+            Calendar cal4 = Calendar.getInstance();
+            cal4.set(2025, Calendar.JUNE, 15, 3, 00);
+            
+            // Crear historiales de actualizaciones 
+			ArrayList<InfoContenedor> actualizacionesc1 = new ArrayList<>(List.of(
+					new InfoContenedor(c1.getId(), 400, NivelLlenado.VERDE, cal.getTime()),
+					new InfoContenedor(c1.getId(), 800, NivelLlenado.NARANJA, cal2.getTime()),
+					new InfoContenedor(c1.getId(), 1000, NivelLlenado.ROJO, cal3.getTime())
+					));
+			
+			
+            ecoservice.addInfoContenedor(c1, actualizacionesc1);
+            
+            ArrayList<InfoContenedor> actualizacionesc2 = new ArrayList<>(List.of(
+            		new InfoContenedor(c2.getId(), 500, NivelLlenado.VERDE, cal.getTime()),
+            		new InfoContenedor(c2.getId(), 1500, NivelLlenado.NARANJA, cal2.getTime())
+            		));
+            ecoservice.addInfoContenedor(c2, actualizacionesc2);
+            
+			ArrayList<InfoContenedor> actualizacionesc3 = new ArrayList<>(List.of(
+					new InfoContenedor(c3.getId(), 200, NivelLlenado.VERDE, cal2.getTime()),
+					new InfoContenedor(c3.getId(), 600, NivelLlenado.NARANJA, cal3.getTime()),
+					new InfoContenedor(c3.getId(), 800, NivelLlenado.ROJO, cal4.getTime())
+					));
 
-            // Crear plantas de prueba [cite: 36]
-            PlantaReciclaje pl1 = new PlantaReciclaje("PLASSB", "PlasSB Ltd.", "http://plassb.com/api/notificar");
-            PlantaReciclaje pl2 = new PlantaReciclaje("CONTSOCKET", "ContSocket Ltd.", "http://contsocket.com/api/notificar");
-            appService.addPlanta(pl1);
-            appService.addPlanta(pl2);
-            // Crear capacidades de prueba [cite: 37]
-            ArrayList<CapacidadDiaria> capacidadesDiarias1 = new ArrayList<>(List.of(
-                    new CapacidadDiaria(pl1.getIdPlanta(), LocalDate.now(), 100.0),
-                    new CapacidadDiaria(pl1.getIdPlanta(), LocalDate.now().plusDays(1), 150.0)
+            
+
+            // Crear plantas de prueba  
+            PlantaReciclaje pl1 = new PlantaReciclaje(1245, "PlasSB Ltd.", 2);
+            PlantaReciclaje pl2 = new PlantaReciclaje(489, "ContSocket Ltd.", 4);
+            PlantaReciclaje pl3 = new PlantaReciclaje(777, "EcoRecicla SA.", 3);
+            ecoservice.addPlanta(pl1);
+            ecoservice.addPlanta(pl2);
+            // Crear capacidades de prueba 
+            ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
+                    new InfoPlanta(pl1, 1.5,cal.getTime()),
+                    new InfoPlanta(pl1, 1.0,cal2.getTime())
             ));
-            appService.addCapacidades(pl1, capacidadesDiarias1);
-            ArrayList<CapacidadDiaria> capacidadesDiaries2 = new ArrayList<>(List.of(
-                    new CapacidadDiaria(pl2.getIdPlanta(), LocalDate.now(), 80.0)
-            ));
-            appService.addCapacidades(pl2, capacidadesDiaries2);
+            ecoservice.addInfoPlanta(pl1, infoPlanta1);
+			ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(
+					new InfoPlanta(pl2, 3.0, cal.getTime()),
+					new InfoPlanta(pl2, 2.5, cal2.getTime())
+					));
+			ecoservice.addInfoPlanta(pl2, infoPlanta2);
+			
+			ArrayList<InfoPlanta> infoPlanta3 = new ArrayList<>(List.of(
+					new InfoPlanta(pl3, 2.0, cal3.getTime()),
+					new InfoPlanta(pl3, 1.0, cal4.getTime())
+					));
+			ecoservice.addInfoPlanta(pl3, infoPlanta3);
 		};
 	}
 }

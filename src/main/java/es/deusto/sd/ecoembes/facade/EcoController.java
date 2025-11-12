@@ -62,8 +62,8 @@ public class EcoController {
     @PostMapping("/auth/logout")    
     public ResponseEntity<Void> logout(
     		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Token a invalidar en texto plano", required = true)
-    		@RequestBody String token) {    	
-        Optional<Boolean> result = ecoService.logout(token);
+    		@RequestBody LogoutDTO logoutDTO) {    	
+        Optional<Boolean> result = ecoService.logout(logoutDTO.getToken());
     	
         if (result.isPresent() && result.get()) {
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);	
