@@ -78,10 +78,12 @@ public class Ruta {
     	
     }
 
-
+    /*
     public Double obtenerDuracionEstimada() {
- 
+    	
     }
+     * 
+     */
 
     public void agregarContenedor(Contenedor contenedor) {
       

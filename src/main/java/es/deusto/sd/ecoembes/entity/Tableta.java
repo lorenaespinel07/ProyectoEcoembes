@@ -1,7 +1,7 @@
 package es.deusto.sd.ecoembes.entity;
 
-import es.deusto.sd.ecoembes.entity.Estado;
-
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class Tableta {
@@ -15,6 +15,8 @@ public class Tableta {
     private List<String> ubicacionesContenedores;
 
     // Constructor
+    /*
+     * 
     public TabletaDTO(long idTableta, String matriculaCamion, long idRuta, Date fechaRuta,
                       double distanciaTotal, double duracionEstimada,
                       List<String> ubicacionesContenedores) {
@@ -26,6 +28,7 @@ public class Tableta {
         this.duracionEstimada = duracionEstimada;
         this.ubicacionesContenedores = ubicacionesContenedores;
     }
+     */
 
     // Getters y Setters
     public long getIdTableta() {

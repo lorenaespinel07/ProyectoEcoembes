@@ -1,94 +1,77 @@
 package es.deusto.sd.ecoembes.entity;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class Contenedor {
-	private long id;
-	private long idPlanta;
-	private String ubicacion;
-	private Double llenado;
-	private Date ultimaActualizacion;
-	private String tipoContenedor;
+	private long id; // identificador 
+	private String ubicacion; //ubicacion: Codigo postal
+	private String cp;
+	private int capacidadIni;
+	private NivelLlenado nivel;
 	
-	public Contenedor(long id,long idPlanta, String ubicacion, Double llenado, Date ultimaActualizacion,
-			String tipoContenedor) {
-		this.id = id;
-		this.idPlanta = idPlanta;
-		this.ubicacion = ubicacion;
-		this.llenado = llenado;
-		this.ultimaActualizacion = ultimaActualizacion;
-		this.tipoContenedor = tipoContenedor;
-	}
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public long getIdPlanta() {
-		return idPlanta;
-	}
-
-	public void setIdPlanta(long idPlanta) {
-		this.idPlanta = idPlanta;
-	}
-
 	public String getUbicacion() {
 		return ubicacion;
 	}
-
 	public void setUbicacion(String ubicacion) {
 		this.ubicacion = ubicacion;
 	}
-
-	public Double getLlenado() {
-		return llenado;
+	public String getCp() {
+		return cp;
 	}
-
-	public void setLlenado(Double llenado) {
-		this.llenado = llenado;
+	public void setCp(String cp) {
+		this.cp = cp;
 	}
-
-	public Date getUltimaActualizacion() {
-		return ultimaActualizacion;
+	public int getCapacidadIni() {
+		return capacidadIni;
 	}
-
-	public void setUltimaActualizacion(Date ultimaActualizacion) {
-		this.ultimaActualizacion = ultimaActualizacion;
+	public void setCapacidadIni(int capacidadIni) {
+		this.capacidadIni = capacidadIni;
 	}
-
-	public String getTipoContenedor() {
-		return tipoContenedor;
+	public NivelLlenado getNivel() {
+		return nivel;
 	}
-
-	public void setTipoContenedor(String tipoContenedor) {
-		this.tipoContenedor = tipoContenedor;
+	public void setNivel(NivelLlenado nivel) {
+		this.nivel = nivel;
 	}
-	
-	//Metodos adicionales
-	public Double obtenerNivelLLenado() {
-		return this.llenado;
+	public Contenedor(long id, String ubicacion, String cp, int capacidadIni, NivelLlenado nivel) {
+		super();
+		this.id = id;
+		this.ubicacion = ubicacion;
+		this.cp = cp;
+		this.capacidadIni = capacidadIni;
+		this.nivel = nivel;
 	}
-	public void actualizarInformacion() {
-		//TODO: implementar 
+	public Contenedor(long id, String ubicacion, String cp, int capacidadIni) {
+		super();
+		this.id = id;
+		this.ubicacion = ubicacion;
+		this.cp = cp;
+		this.capacidadIni = capacidadIni;
+		this.nivel = NivelLlenado.VERDE;
 	}
+	public Contenedor() {}
 	// hashCode and equals
-		@Override
-		public int hashCode() {
-			return Objects.hash();
-		}
+	@Override
+	public int hashCode() {
+		return Objects.hash();
+	}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Contenedor other = (Contenedor) obj;
-			return id == other.id;
-		}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Contenedor other = (Contenedor) obj;
+		return id == other.id;
+	}
 	
 }
