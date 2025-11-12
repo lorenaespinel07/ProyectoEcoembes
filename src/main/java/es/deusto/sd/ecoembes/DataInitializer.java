@@ -70,7 +70,7 @@ public class DataInitializer {
 			ArrayList<InfoContenedor> actualizacionesc1 = new ArrayList<>(List.of(
 					new InfoContenedor(c1.getId(), 400, NivelLlenado.VERDE, cal.getTime()),
 					new InfoContenedor(c1.getId(), 800, NivelLlenado.NARANJA, cal2.getTime()),
-					new InfoContenedor(c1.getId(), 10000, NivelLlenado.ROJO, cal3.getTime())
+					new InfoContenedor(c1.getId(), 5000, NivelLlenado.ROJO, cal3.getTime())
 					));
 			
 			
@@ -101,7 +101,7 @@ public class DataInitializer {
             // Crear capacidades de prueba 
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
                     new InfoPlanta(pl1, 1.5,cal.getTime()),
-                    new InfoPlanta(pl1, 1.0,cal2.getTime())
+                    new InfoPlanta(pl1, 10.0,cal2.getTime())
             ));
             ecoservice.addInfoPlanta(pl1, infoPlanta1);
 			ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(

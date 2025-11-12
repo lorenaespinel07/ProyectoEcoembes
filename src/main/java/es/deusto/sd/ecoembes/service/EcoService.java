@@ -226,20 +226,20 @@ public class EcoService {
 		}
 		
 		for(PlantaReciclaje planta : dbPlantas.values()) {
-			System.out.println(planta.getNombre());
 			List<InfoPlanta> listaInfo = dbInfoPlanta.get(planta.getIdplanta());
+			
 			if (listaInfo != null) {
-				for(InfoPlanta plantaInfo : listaInfo) { 
-					if (plantaInfo.getCapacidadActual()* 1000 + envaseTotales <= plantaInfo.getPlanta().getCapacidad()* 1000) {
-						//Asignación exitosa
-						plantaAsignada = planta;
-						Asignacion asignacion = new Asignacion(contenedoresAsignados, plantaAsignada, personal, new Date());
-						dbAsignacion.add(asignacion);
-						return Optional.of("Contenedores asignados a la planta " + plantaInfo.getPlanta().getNombre() + " cantidad estimada de envases: "+ envaseTotales);
-					}
+				System.out.println("Info planta encontrada para: " + planta.getNombre());
+				InfoPlanta plantaInfo = listaInfo.get(listaInfo.size() - 1); //Última info
+				System.out.println("Capacidad actual planta " + planta.getNombre() + ": " + plantaInfo.getCapacidadActual()*1000);
+				if (plantaInfo.getCapacidadActual()* 1000 - envaseTotales >= 0) {
+					//Asignación exitosa
+					plantaAsignada = planta;
+					Asignacion asignacion = new Asignacion(contenedoresAsignados, plantaAsignada, personal, new Date());
+					dbAsignacion.add(asignacion);
+					return Optional.of("Contenedores asignados a la planta " + plantaInfo.getPlanta().getNombre() + " cantidad estimada de envases: "+ envaseTotales);
 				}
 			}
-			return Optional.of("No hay información de capacidad para la planta: " + planta.getNombre());
 		}
 		return Optional.of("No hay plantas con capacidad suficiente para los envases totales: " + envaseTotales);
 	}
