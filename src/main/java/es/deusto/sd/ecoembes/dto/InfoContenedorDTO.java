@@ -1,11 +1,9 @@
 package es.deusto.sd.ecoembes.dto;
 
-import es.deusto.sd.ecoembes.entity.NivelLlenado;
-
 public class InfoContenedorDTO {
 	Long idContendor;
 	int numEstimado;
-	NivelLlenado nivelLlenado;
+	String nivelLlenado;
 	public Long getIdContendor() {
 		return idContendor;
 	}
@@ -18,10 +16,10 @@ public class InfoContenedorDTO {
 	public void setNumEstimado(int numEstimado) {
 		this.numEstimado = numEstimado;
 	}
-	public NivelLlenado getNivelLlenado() {
+	public String getNivelLlenado() {
 		return nivelLlenado;
 	}
-	public void setNivelLlenado(NivelLlenado nivelLlenado) {
+	public void setNivelLlenado(String nivelLlenado) {
 		this.nivelLlenado = nivelLlenado;
 	}
 	

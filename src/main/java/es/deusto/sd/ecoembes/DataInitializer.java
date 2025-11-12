@@ -14,9 +14,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
-import es.deusto.sd.ecoembes.service.AuctionsService;
-import es.deusto.sd.ecoembes.service.AuthService;
+import es.deusto.sd.ecoembes.entity.Personal;
+import es.deusto.sd.ecoembes.service.EcoService;
 
 @Configuration
 public class DataInitializer {
@@ -24,78 +23,46 @@ public class DataInitializer {
 	private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 	
     @Bean
-    CommandLineRunner initData(AuctionsService auctionsService, AuthService authService) {
-		return args -> {			
-			// Create some users
-			User batman = new User("BruceWayne", "batman@dc.com", "Batm@n123!");
-			User spiderman = new User("PeterParker", "spiderman@marvel.com", "Sp!derM4n2023");
-			User superman = new User("ClarkKent", "superman@dc.com", "Sup3rm@n456!");
-			User wonderWoman = new User("DianaPrince", "wonderwoman@dc.com", "Wond3rW0m@n!789");
-			User captainMarvel = new User("CarolDanvers", "captainmarvel@marvel.com", "C@ptMarv3l#987");
-			User blackWidow = new User("NatashaRomanoff", "blackwidow@marvel.com", "Bl@ckWid0w2023");
+    CommandLineRunner initData(EcoService ecoservice) {
+		return args -> {
+			Personal p1 = new Personal("admin@ecoembes.com", "hash_de_1234", "Admin User");
+            appService.addPersonal(p1);
+            PersonalEcoembes p2 = new PersonalEcoembes("user@ecoembes.com", "hash_de_5678", "Regular User");
+            appService.addPersonal(p2);
 
-			authService.addUser(batman);
-			authService.addUser(spiderman);
-			authService.addUser(superman);
-			authService.addUser(wonderWoman);
-			authService.addUser(captainMarvel);
-			authService.addUser(blackWidow);			
-			
-			logger.info("Users saved!");
-			
-			// Create some categories
-			Category electronics = new Category("Electronics");
-			Category sports = new Category("Sporting Goods");
-			Category motors = new Category("Motors");
-			
-			auctionsService.addCategory(electronics);
-			auctionsService.addCategory(sports);
-			auctionsService.addCategory(motors);
-			logger.info("Categories saved!");
+            // Crear contenedores de prueba
+            Contenedor c1 = new Contenedor("C-001", new Ubicacion("Calle Falsa 123", "48001"), 1000.0);
+            Contenedor c2 = new Contenedor("C-002", new Ubicacion("Avenida Principal 45", "48001"), 1000.0);
+            Contenedor c3 = new Contenedor("C-003", new Ubicacion("Plaza Nueva 1", "48002"), 800.0);
+            appService.addContenedor(c1);
+            appService.addContenedor(c2);
+            appService.addContenedor(c3);
+            // Crear historiales de actualizaciones (con datos de ayer y hoy)
+            ArrayList<ActualizacionContenedor> actualizacionesc1 = new ArrayList<>(List.of(
+                    new ActualizacionContenedor(Timestamp.valueOf(LocalDate.now().minusDays(1).atStartOfDay()), 100, EstadoLlenado.VERDE, c1.getIdentificador())
+            ));
+            appService.addActualizaciones(c1, actualizacionesc1);
+            ArrayList<ActualizacionContenedor> actualizacionesc2 = new ArrayList<>(List.of(
+                    new ActualizacionContenedor(Timestamp.valueOf(LocalDate.now().minusDays(1).atStartOfDay()), 500, EstadoLlenado.NARANJA, c2.getIdentificador())
+            ));
+            appService.addActualizaciones(c2, actualizacionesc2);
+            appService.addActualizaciones(c3, new ArrayList<ActualizacionContenedor>());
 
-
-			// Initialize auctions end date
-			Calendar calendar = Calendar.getInstance();
-			
-			// Set calendar to December 31, current year
-			calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-			calendar.set(Calendar.DAY_OF_MONTH, 31);
-			calendar.set(Calendar.HOUR_OF_DAY, 23);
-			calendar.set(Calendar.MINUTE, 59);
-			calendar.set(Calendar.SECOND, 59);
-			calendar.set(Calendar.MILLISECOND, 999);
-			
-			Date auctionEndDate = calendar.getTime();
-			
-			// Articles of Electronics category
-            Article iphone = new Article(0, "Apple iPhone 14 Pro", 999.99f, auctionEndDate, electronics, batman);
-            Article ps5 = new Article(1, "Sony PlayStation 5", 499.99f, auctionEndDate, electronics, spiderman);
-            Article macbook = new Article(2, "MacBook Air M2", 1199.99f, auctionEndDate, electronics, wonderWoman);
-            Article samsung = new Article(3, "Samsung Galaxy S21", 799.99f, auctionEndDate, electronics, captainMarvel);
-            // Articles of Sporting Goods category
-            Article tennisRacket = new Article(4, "Wilson Tennis Racket", 119.99f, auctionEndDate, sports, batman);
-            Article soccerBall = new Article(5, "Adidas Soccer Ball", 29.99f, auctionEndDate, sports, blackWidow);
-            Article fitbit = new Article(6, "Fitbit Charge 5 Fitness Tracker", 149.99f, auctionEndDate, sports, captainMarvel);
-            Article peloton = new Article(7, "Peloton Exercise Bike", 1899.99f, auctionEndDate, sports, wonderWoman);
-            // Articles of Motors category
-            Article tesla = new Article(8, "Tesla Model 3", 42999.99f, auctionEndDate, motors, batman);
-            Article civic = new Article(9, "Honda Civic 2021", 21999.99f, auctionEndDate, motors, superman);
-            Article f150 = new Article(10, "Ford F-150 Pickup Truck", 33999.99f, auctionEndDate, motors, spiderman);
-            Article corvette = new Article(11, "Chevrolet Corvette Stingray", 59999.99f, auctionEndDate, motors, captainMarvel);
-
-            auctionsService.addArticle(iphone);
-            auctionsService.addArticle(ps5);
-            auctionsService.addArticle(macbook);
-            auctionsService.addArticle(samsung);
-            auctionsService.addArticle(tennisRacket);
-            auctionsService.addArticle(soccerBall);
-            auctionsService.addArticle(fitbit);
-            auctionsService.addArticle(peloton);
-            auctionsService.addArticle(tesla);
-            auctionsService.addArticle(civic);
-            auctionsService.addArticle(f150);
-            auctionsService.addArticle(corvette);
-            logger.info("Articles saved!");						
+            // Crear plantas de prueba [cite: 36]
+            PlantaReciclaje pl1 = new PlantaReciclaje("PLASSB", "PlasSB Ltd.", "http://plassb.com/api/notificar");
+            PlantaReciclaje pl2 = new PlantaReciclaje("CONTSOCKET", "ContSocket Ltd.", "http://contsocket.com/api/notificar");
+            appService.addPlanta(pl1);
+            appService.addPlanta(pl2);
+            // Crear capacidades de prueba [cite: 37]
+            ArrayList<CapacidadDiaria> capacidadesDiarias1 = new ArrayList<>(List.of(
+                    new CapacidadDiaria(pl1.getIdPlanta(), LocalDate.now(), 100.0),
+                    new CapacidadDiaria(pl1.getIdPlanta(), LocalDate.now().plusDays(1), 150.0)
+            ));
+            appService.addCapacidades(pl1, capacidadesDiarias1);
+            ArrayList<CapacidadDiaria> capacidadesDiaries2 = new ArrayList<>(List.of(
+                    new CapacidadDiaria(pl2.getIdPlanta(), LocalDate.now(), 80.0)
+            ));
+            appService.addCapacidades(pl2, capacidadesDiaries2);
 		};
 	}
 }
