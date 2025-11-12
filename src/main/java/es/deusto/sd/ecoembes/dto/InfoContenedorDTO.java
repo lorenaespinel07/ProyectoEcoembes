@@ -4,6 +4,14 @@ public class InfoContenedorDTO {
 	Long idContendor;
 	int numEstimado;
 	String nivelLlenado;
+	String token;
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	public Long getIdContendor() {
 		return idContendor;
 	}

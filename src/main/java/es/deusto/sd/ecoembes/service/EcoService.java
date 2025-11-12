@@ -25,7 +25,7 @@ public class EcoService {
 	private static Map<Long, Contenedor> dbContenedor = new HashMap<>();
 	private static Map<Long, List<InfoContenedor>> dbInfoContenedor = new HashMap<>();
 	
-
+	
 	public Map<String, Personal> getDbTokensActivos() {
 		return dbTokensActivos;
 	}
@@ -112,10 +112,10 @@ public class EcoService {
 		}
 	}
 	//POST
-	public Optional<Contenedor> crearContenedor(long idConetendor, String ubicacion, String cp, int capacidadIni, String token){
+	public Optional<?> crearContenedor(long idConetendor, String ubicacion, String cp, int capacidadIni, String token){
 		if (!validarToken(token)) {
 			//token no valido
-			return Optional.empty();
+			return Optional.of("Token no válido");
 		}
 		if (!dbContenedor.containsKey(idConetendor)) {
 			Contenedor contenedor = new Contenedor(idConetendor, ubicacion, cp, capacidadIni);
@@ -127,10 +127,10 @@ public class EcoService {
 		}
 	}
 	//GET 
-	public Optional<ArrayList<InfoContenedor>> getInfoContendorPorFecha(long idContendor,Date fechaInicio, Date fechaFin, String token){
+	public Optional<?> getInfoContendorPorFecha(long idContendor,Date fechaInicio, Date fechaFin, String token){
 		if (!validarToken(token)) {
 			//token no valido
-			return Optional.empty();
+			return Optional.of("Token no válido");
 		}
 		Contenedor contenedor = dbContenedor.get(idContendor);
 		if (contenedor != null) {
@@ -145,7 +145,7 @@ public class EcoService {
 				return Optional.of(resultado);
 			} else {
 				// No hay información para este contenedor
-				return Optional.of(new ArrayList<>());
+				return Optional.empty();
 			}
 		} else {
 			// El contenedor no existe
@@ -155,10 +155,10 @@ public class EcoService {
 	
 	
 	//GET
-	public Optional< ArrayList<InfoContenedor>> getInfoContenedorPorZona(String cp, Date fecha, String token){
+	public Optional<?> getInfoContenedorPorZona(String cp, Date fecha, String token){
 		if (!validarToken(token)) {
 			//token no valido
-			return Optional.empty();
+			return Optional.of("Token no válido");
 		}
 		//LocalDate fechaLocal = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		ArrayList<InfoContenedor> resultado = new ArrayList<>();
@@ -180,10 +180,10 @@ public class EcoService {
 		return Optional.of(resultado);
 	}
 	
-	public Optional<ArrayList<InfoPlanta>> getInfoPlantasPorFecha(Date fecha, String token){
+	public Optional<?> getInfoPlantasPorFecha(Date fecha, String token){
 		if (!validarToken(token)) {
 			//token no valido
-			return Optional.empty();
+			return Optional.of("Token no válido");
 		}
 		ArrayList<InfoPlanta> resultado = new ArrayList<>();
 		for (PlantaReciclaje planta : dbPlantas.values()) {
@@ -204,7 +204,7 @@ public class EcoService {
 	public Optional<String> asignarContenedoresAPlantas(List<Long> idsContenedores, String token){
 		if (!validarToken(token)) {
 			//token no valido
-			return Optional.empty();
+			return Optional.of("UNAUTHORIZED");
 		}
 		ArrayList<Contenedor> contenedoresAsignados = new ArrayList<>();
 		Personal personal = dbTokensActivos.get(token);
@@ -224,7 +224,9 @@ public class EcoService {
 				return Optional.of("Contenedor con ID " + idContenedor + " no encontrado.");
 			}
 		}
+		
 		for(PlantaReciclaje planta : dbPlantas.values()) {
+			System.out.println(planta.getNombre());
 			List<InfoPlanta> listaInfo = dbInfoPlanta.get(planta.getIdplanta());
 			if (listaInfo != null) {
 				for(InfoPlanta plantaInfo : listaInfo) { 

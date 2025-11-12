@@ -7,7 +7,6 @@ package es.deusto.sd.ecoembes;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,8 +22,10 @@ import es.deusto.sd.ecoembes.service.EcoService;
 @Configuration
 public class DataInitializer {
 
-    private final EcoApplication ecoApplication;
+    @SuppressWarnings("unused")
+	private final EcoApplication ecoApplication;
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     DataInitializer(EcoApplication ecoApplication) {
@@ -39,17 +40,15 @@ public class DataInitializer {
             Personal p2 = new Personal(9876,"user@ecoembes.com", "sincontraseña", "Regular User");
             ecoservice.addPersonal(p2);
             
-            Token token1 = new Token("1236gty18ty", p1);
+            Token token1 = new Token("1", p1);
             ecoservice.addTokenActivo(token1.getToken(), p1);
             Token token2 = new Token("9876yhn54gh", p2);
             ecoservice.addTokenActivo(token2.getToken(), p2);
             
-            System.out.println(ecoservice.getDbTokensActivos().keySet());
-
             // Crear contenedores de prueba
-            Contenedor c1 = new Contenedor(11234, "Calle de los muertos", "4001", 1000);
-            Contenedor c2 = new Contenedor(3488, "Avenida Principal 45", "4001", 2000);
-            Contenedor c3 = new Contenedor(87678, "Plaza Nueva 1", "4802", 800);
+            Contenedor c1 = new Contenedor(11, "Calle de los muertos", "4001", 1000);
+            Contenedor c2 = new Contenedor(22, "Avenida Principal 45", "4001", 2000);
+            Contenedor c3 = new Contenedor(33, "Plaza Nueva 1", "4802", 800);
             ecoservice.addContenedor(c1);
             ecoservice.addContenedor(c2);
             ecoservice.addContenedor(c3);
@@ -71,7 +70,7 @@ public class DataInitializer {
 			ArrayList<InfoContenedor> actualizacionesc1 = new ArrayList<>(List.of(
 					new InfoContenedor(c1.getId(), 400, NivelLlenado.VERDE, cal.getTime()),
 					new InfoContenedor(c1.getId(), 800, NivelLlenado.NARANJA, cal2.getTime()),
-					new InfoContenedor(c1.getId(), 1000, NivelLlenado.ROJO, cal3.getTime())
+					new InfoContenedor(c1.getId(), 10000, NivelLlenado.ROJO, cal3.getTime())
 					));
 			
 			
@@ -88,6 +87,7 @@ public class DataInitializer {
 					new InfoContenedor(c3.getId(), 600, NivelLlenado.NARANJA, cal3.getTime()),
 					new InfoContenedor(c3.getId(), 800, NivelLlenado.ROJO, cal4.getTime())
 					));
+			ecoservice.addInfoContenedor(c3, actualizacionesc3);
 
             
 
@@ -97,6 +97,7 @@ public class DataInitializer {
             PlantaReciclaje pl3 = new PlantaReciclaje(777, "EcoRecicla SA.", 3);
             ecoservice.addPlanta(pl1);
             ecoservice.addPlanta(pl2);
+            ecoservice.addPlanta(pl3);
             // Crear capacidades de prueba 
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
                     new InfoPlanta(pl1, 1.5,cal.getTime()),
@@ -105,14 +106,16 @@ public class DataInitializer {
             ecoservice.addInfoPlanta(pl1, infoPlanta1);
 			ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(
 					new InfoPlanta(pl2, 3.0, cal.getTime()),
-					new InfoPlanta(pl2, 2.5, cal2.getTime())
+					new InfoPlanta(pl2, 2.5, cal3.getTime())
 					));
 			ecoservice.addInfoPlanta(pl2, infoPlanta2);
 			
+
 			ArrayList<InfoPlanta> infoPlanta3 = new ArrayList<>(List.of(
 					new InfoPlanta(pl3, 2.0, cal3.getTime()),
 					new InfoPlanta(pl3, 1.0, cal4.getTime())
 					));
+			
 			ecoservice.addInfoPlanta(pl3, infoPlanta3);
 		};
 	}
