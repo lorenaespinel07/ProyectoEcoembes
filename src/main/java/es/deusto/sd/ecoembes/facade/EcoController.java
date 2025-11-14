@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/eco")
 @Tag(name = "Eco Controller", description = "Operaciones de Ecoembes")
 public class EcoController {
-	private EcoService ecoService;
+	private final EcoService ecoService;
 	
 	public EcoController(EcoService ecoService) {
 		this.ecoService = ecoService;
@@ -45,9 +45,9 @@ public class EcoController {
 	@PostMapping("/auth/login")
 	public ResponseEntity<String> login(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Credenciales del usuario", required = true)
-			@RequestBody CredentialsDTO credentials) {
-		Optional<String> token = ecoService.login(credentials.getEmail(), credentials.getPassword());
-		if (token.isPresent()) {
+			@RequestBody LoginDTO loginDTO) {
+		Optional<String> token = ecoService.login(loginDTO.getCorreo(), loginDTO.getContrasena());
+        if (token.isPresent()) {
 			return new ResponseEntity<>(token.get(), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

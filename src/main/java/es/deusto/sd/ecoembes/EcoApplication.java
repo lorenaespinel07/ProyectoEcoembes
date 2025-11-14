@@ -3,8 +3,6 @@ package es.deusto.sd.ecoembes;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import es.deusto.sd.ecoembes.facade.EcoController;
-
 @SpringBootApplication
 public class EcoApplication {
 
@@ -14,6 +12,11 @@ public class EcoApplication {
 //        this.ecoController = ecoController;
 //    }
     public static void main(String[] args) {
-        SpringApplication.run(EcoApplication.class, args); 
+        SpringApplication.run(EcoApplication.class, args);
+
+        System.out.println("=================================================================");
+        System.out.println("Swagger UI listo. Accede en:");
+        System.out.println("http://localhost:8080/swagger-ui/index.html#"); // O el puerto que uses
+        System.out.println("=================================================================");
 	}
 }
