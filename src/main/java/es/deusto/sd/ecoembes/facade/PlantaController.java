@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/eco")
+@RequestMapping("/eco/planta")
 @Tag(name = "Planta Controller", description = "Operaciones de Plantas y Asignaciones")
 public class PlantaController {
     private final EcoService ecoService; // Inyecta el Facade
@@ -36,7 +36,7 @@ public class PlantaController {
             @ApiResponse(responseCode = "401", description = "Unauthorized: Token inválido, no autorizado para consultar información") })
 
 
-    @GetMapping("/plantas/capacidad")
+    @GetMapping("/capacidad")
     public ResponseEntity<?> getPlantasPorFecha(
             @Parameter(description = "Fecha de las plantas a consultar", required = true)
             @RequestParam("Fecha") String Fecha,
@@ -63,7 +63,7 @@ public class PlantaController {
             @ApiResponse(responseCode = "400", description = "Bad Request: Datos inválidos para la asignación"),
             @ApiResponse(responseCode = "401", description = "Unauthorized: Token inválido, no autorizado para asignar contenedores") })
 
-    @PostMapping("/asignaciones")
+    @PostMapping("/asignacion")
     public ResponseEntity<?> asignarPlantaReciclaje(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos de la asignación de planta", required = true)
             @RequestBody AsignacionDTO asignacionDTO

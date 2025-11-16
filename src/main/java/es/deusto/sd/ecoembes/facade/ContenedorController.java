@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/eco") // Mantenemos la ruta base por simplicidad
+@RequestMapping("/eco/contenedor") // Mantenemos la ruta base por simplicidad
 @Tag(name = "Contenedor Controller", description = "Operaciones de Contenedores y Sensores")
 public class ContenedorController {
 
@@ -42,7 +42,7 @@ public class ContenedorController {
                     @ApiResponse(responseCode = "500", description = "Internal Server Error: Error interno del servidor")
             }
     )
-    @PostMapping("/sensores/actualizar")
+    @PostMapping("/actualizacion")
     public ResponseEntity<InfoContenedorDTO> actualizarInfoContenedor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del contenedor a actualizar", required = true)
             @RequestBody InfoContenedorDTO infoContenedorDTO){
@@ -66,7 +66,7 @@ public class ContenedorController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized: Token inválido, no autorizado para crear contenedor")
             }
     )
-    @PostMapping("/contenedores")
+    @PostMapping("")
     public ResponseEntity<?> crearContenedor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del contenedor a crear", required = true)
             @RequestBody ContenedorDTO contenedorDTO){
@@ -91,7 +91,7 @@ public class ContenedorController {
             @ApiResponse(responseCode = "400", description = "Bad Request: Datos inválidos para la consulta"),
             @ApiResponse(responseCode = "401", description = "Unauthorized: Token inválido, no autorizado para consultar información") })
 
-    @GetMapping("/contenedores/{id}/info")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getInfoContenedorPorFecha(
             @Parameter(description = "ID del contenedor a consultar", required = true)
             @PathVariable("id") long id,
@@ -125,15 +125,15 @@ public class ContenedorController {
         }
     }
 
-    @Operation(summary = "Obtener información del contenedor por zona", description = "Permite obtener la información de los contenedores en una zona específica utilizando el código postal y un token.", responses = {
+    @Operation(summary = "Obtener información de los contenedores que hay en una misma zona en una fecha", description = "Permite obtener la información de los contenedores en una zona específica utilizando el código postal y un token.", responses = {
             @ApiResponse(responseCode = "200", description = "OK: Información del contenedor obtenida correctamente"),
             @ApiResponse(responseCode = "400", description = "Bad Request: Datos inválidos para la consulta"),
             @ApiResponse(responseCode = "401", description = "Unauthorized: Token inválido, no autorizado para consultar información") })
 
-    @GetMapping("/{cp}/contenedores")
+    @GetMapping("")
     public ResponseEntity<?> getInfoContenedorPorZona(
             @Parameter(description = "Código postal de la zona a consultar", required = true)
-            @PathVariable("cp") String cp,
+            @RequestParam("cp") String cp,
             @Parameter(description = "Fecha para la consulta", required = true)
             @RequestParam("fecha") String fecha,
             @Parameter(description = "Token de autorización", required = true)
