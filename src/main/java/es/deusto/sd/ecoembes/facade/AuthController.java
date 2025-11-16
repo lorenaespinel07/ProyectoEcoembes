@@ -46,6 +46,19 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @Operation
+            (
+            summary = "logout del sistema",
+            description = "Permite a un usuario cerrar sesión proporcionando un token válido. Invalida el token si tiene éxito.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "No Content: Cierre de sesión exitoso, token invalidado"),
+                    @ApiResponse(responseCode = "401", description = "No autorizado: Token inválido, cierre de sesión fallido"),
+
+            }
+    )
+
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Token a invalidar en texto plano", required = true)
