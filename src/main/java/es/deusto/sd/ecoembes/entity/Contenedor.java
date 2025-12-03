@@ -2,11 +2,27 @@ package es.deusto.sd.ecoembes.entity;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Contenedor {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id; // identificador 
-	private String ubicacion; //ubicacion: Codigo postal
+	
+	@Column(nullable = false)
+	private String ubicacion; 
+	@Column(nullable = false)
 	private String cp;
+	@Column(nullable = false)
 	private int capacidadIni;
+	@Enumerated(EnumType.STRING)
 	private NivelLlenado nivel;
 	
 	public long getId() {
