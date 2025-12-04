@@ -11,9 +11,7 @@ public class PlantaFactory {
 			case ContSocket:
 				return new ContSocketGateway();
 			case PlasSB:
-				//Para el futuro
-				// return new PlasSBGateway();
-				return null;
+				return new PlasSBGateway();
 			default:
 				return null;
 		}

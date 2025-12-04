@@ -88,15 +88,27 @@ public class DataInitializer {
             plantaService.addPlanta(pl2);
             plantaService.addPlanta(pl3);
 
+            /*
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
                     new InfoPlanta(pl1, 1.5, cal.getTime()),
                     new InfoPlanta(pl1, 1.0, cal2.getTime())
             ));
             plantaService.addInfoPlanta(pl1, infoPlanta1);
+            */
+            IPlantaGateway plasSBPlanta = factory.getPlanta(tipoPlanta.PlasSB);
+            if (plasSBPlanta != null) {
+            	var infosOpt = plasSBPlanta.getInfosPlanta();
+            	if (infosOpt.isPresent()) {
+            		//Esta parte hay que cambiarla para persistencia
+            		plantaService.addInfoPlanta(pl1, infosOpt.get());
+            	}
+            }
+            
             IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
             if (contsocketPlanta != null) {
 				var infosOpt = contsocketPlanta.getInfosPlanta();
 				if (infosOpt.isPresent()) {
+					//Esta parte hay que cambiarla para persistencia
 					plantaService.addInfoPlanta(pl2, infosOpt.get());
 				}
 			}
@@ -108,9 +120,9 @@ public class DataInitializer {
             plantaService.addInfoPlanta(pl2, infoPlanta2);
 			*/
             ArrayList<InfoPlanta> infoPlanta3 = new ArrayList<>(List.of(
-                    new InfoPlanta(pl3, 2.0, cal3.getTime()),
-                    new InfoPlanta(pl3, 1.0, cal4.getTime())
-            ));
+            		new InfoPlanta(pl3, 2.0, cal3.getTime()),
+            		new InfoPlanta(pl3, 1.0, cal4.getTime())
+            		));
             plantaService.addInfoPlanta(pl3, infoPlanta3);
 
         };
