@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import es.deusto.sd.ecoembes.entity.*;
+import es.deusto.sd.ecoembes.external.IPlantaGateway;
+import es.deusto.sd.ecoembes.external.PlantaFactory;
+import es.deusto.sd.ecoembes.external.PlantaFactory.tipoPlanta;
 import es.deusto.sd.ecoembes.service.AuthService;
 import es.deusto.sd.ecoembes.service.ContenedorService;
 import es.deusto.sd.ecoembes.service.PlantaService;
@@ -76,6 +79,7 @@ public class DataInitializer {
             contenedorService.addInfoContenedor(c3, actualizacionesc3);
 
 
+            PlantaFactory factory = new PlantaFactory();
             PlantaReciclaje pl1 = new PlantaReciclaje(1245, "PlasSB Ltd.", 2);
             PlantaReciclaje pl2 = new PlantaReciclaje(489, "ContSocket Ltd.", 4);
             PlantaReciclaje pl3 = new PlantaReciclaje(777, "EcoRecicla SA.", 3);
@@ -89,13 +93,20 @@ public class DataInitializer {
                     new InfoPlanta(pl1, 1.0, cal2.getTime())
             ));
             plantaService.addInfoPlanta(pl1, infoPlanta1);
-
+            IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
+            if (contsocketPlanta != null) {
+				var infosOpt = contsocketPlanta.getInfosPlanta();
+				if (infosOpt.isPresent()) {
+					plantaService.addInfoPlanta(pl2, infosOpt.get());
+				}
+			}
+            /*
             ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(
                     new InfoPlanta(pl2, 3.0, cal.getTime()),
                     new InfoPlanta(pl2, 2.5, cal3.getTime())
             ));
             plantaService.addInfoPlanta(pl2, infoPlanta2);
-
+			*/
             ArrayList<InfoPlanta> infoPlanta3 = new ArrayList<>(List.of(
                     new InfoPlanta(pl3, 2.0, cal3.getTime()),
                     new InfoPlanta(pl3, 1.0, cal4.getTime())
