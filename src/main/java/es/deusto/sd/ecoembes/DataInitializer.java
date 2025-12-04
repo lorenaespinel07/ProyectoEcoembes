@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import es.deusto.sd.ecoembes.dao.ContenedorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -28,21 +29,27 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initData(AuthService authService,
                                ContenedorService contenedorService,
-                               PlantaService plantaService) {
+                               PlantaService plantaService,
+                               ContenedorRepository contenedorRepository) {
+
         return args -> {
-            Personal p1 = new Personal(12345, "Paquito el pro", "admin@ecoembes.com", "ojolero");
+            if (contenedorRepository.count() > 0) {
+                return;
+            }
+
+            Personal p1 = new Personal("Paquito el pro", "admin@ecoembes.com", "ojolero");
             authService.addPersonal(p1);
 
-            Personal p2 = new Personal(9876, "Regular User", "user@ecoembes.com", "sincontraseña");
+            Personal p2 = new Personal("Regular User", "user@ecoembes.com", "sincontraseña");
             authService.addPersonal(p2);
 
             authService.addTokenActivo("1", p1);
             authService.addTokenActivo("9876yhn54gh", p2);
 
 
-            Contenedor c1 = new Contenedor(11, "Calle de los muertos", "4001", 1000);
-            Contenedor c2 = new Contenedor(22, "Avenida Principal 45", "4001", 2000);
-            Contenedor c3 = new Contenedor(33, "Plaza Nueva 1", "4802", 800);
+            Contenedor c1 = new Contenedor("Calle de los muertos", "4001", 1000);
+            Contenedor c2 = new Contenedor("Avenida Principal 45", "4001", 2000);
+            Contenedor c3 = new Contenedor("Plaza Nueva 1", "4802", 800);
 
             contenedorService.addContenedor(c1);
             contenedorService.addContenedor(c2);
@@ -59,30 +66,30 @@ public class DataInitializer {
             cal4.set(2025, Calendar.JUNE, 15, 3, 00);
 
             ArrayList<InfoContenedor> actualizacionesc1 = new ArrayList<>(List.of(
-                    new InfoContenedor(c1.getId(), 400, NivelLlenado.VERDE, cal.getTime()),
-                    new InfoContenedor(c1.getId(), 800, NivelLlenado.NARANJA, cal2.getTime()),
-                    new InfoContenedor(c1.getId(), 50000, NivelLlenado.ROJO, cal3.getTime())
+                    new InfoContenedor(c1, 400, NivelLlenado.VERDE, cal.getTime()),
+                    new InfoContenedor(c1, 800, NivelLlenado.NARANJA, cal2.getTime()),
+                    new InfoContenedor(c1, 50000, NivelLlenado.ROJO, cal3.getTime())
             ));
             contenedorService.addInfoContenedor(c1, actualizacionesc1);
 
             ArrayList<InfoContenedor> actualizacionesc2 = new ArrayList<>(List.of(
-                    new InfoContenedor(c2.getId(), 500, NivelLlenado.VERDE, cal.getTime()),
-                    new InfoContenedor(c2.getId(), 1500, NivelLlenado.NARANJA, cal2.getTime())
+                    new InfoContenedor(c2, 500, NivelLlenado.VERDE, cal.getTime()),
+                    new InfoContenedor(c2, 1500, NivelLlenado.NARANJA, cal2.getTime())
             ));
             contenedorService.addInfoContenedor(c2, actualizacionesc2);
 
             ArrayList<InfoContenedor> actualizacionesc3 = new ArrayList<>(List.of(
-                    new InfoContenedor(c3.getId(), 200, NivelLlenado.VERDE, cal2.getTime()),
-                    new InfoContenedor(c3.getId(), 600, NivelLlenado.NARANJA, cal3.getTime()),
-                    new InfoContenedor(c3.getId(), 800, NivelLlenado.ROJO, cal4.getTime())
+                    new InfoContenedor(c3, 200, NivelLlenado.VERDE, cal2.getTime()),
+                    new InfoContenedor(c3, 600, NivelLlenado.NARANJA, cal3.getTime()),
+                    new InfoContenedor(c3, 800, NivelLlenado.ROJO, cal4.getTime())
             ));
             contenedorService.addInfoContenedor(c3, actualizacionesc3);
 
 
             PlantaFactory factory = new PlantaFactory();
-            PlantaReciclaje pl1 = new PlantaReciclaje(1245, "PlasSB Ltd.", 2);
-            PlantaReciclaje pl2 = new PlantaReciclaje(489, "ContSocket Ltd.", 4);
-            PlantaReciclaje pl3 = new PlantaReciclaje(777, "EcoRecicla SA.", 3);
+            PlantaReciclaje pl1 = new PlantaReciclaje("PlasSB Ltd.", 2);
+            PlantaReciclaje pl2 = new PlantaReciclaje("ContSocket Ltd.", 4);
+            PlantaReciclaje pl3 = new PlantaReciclaje("EcoRecicla SA.", 3);
 
             plantaService.addPlanta(pl1);
             plantaService.addPlanta(pl2);
@@ -97,21 +104,24 @@ public class DataInitializer {
             */
             IPlantaGateway plasSBPlanta = factory.getPlanta(tipoPlanta.PlasSB);
             if (plasSBPlanta != null) {
-            	var infosOpt = plasSBPlanta.getInfosPlanta();
-            	if (infosOpt.isPresent()) {
-            		//Esta parte hay que cambiarla para persistencia
-            		plantaService.addInfoPlanta(pl1, infosOpt.get());
-            	}
+                var infosOpt = plasSBPlanta.getInfosPlanta();
+                if (infosOpt.isPresent()) {
+                    List<InfoPlanta> infos = infosOpt.get();
+                    infos.forEach(i -> i.setPlanta(pl1));
+                    plantaService.addInfoPlanta(pl1, new ArrayList<>(infos));
+                }
             }
             
             IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
             if (contsocketPlanta != null) {
-				var infosOpt = contsocketPlanta.getInfosPlanta();
-				if (infosOpt.isPresent()) {
-					//Esta parte hay que cambiarla para persistencia
-					plantaService.addInfoPlanta(pl2, infosOpt.get());
-				}
-			}
+                var infosOpt = contsocketPlanta.getInfosPlanta();
+                if (infosOpt.isPresent()) {
+                    List<InfoPlanta> infos = infosOpt.get();
+                    // IMPORTANTE: Asignamos la planta padre a cada info antes de guardar
+                    infos.forEach(i -> i.setPlanta(pl2));
+                    plantaService.addInfoPlanta(pl2, new ArrayList<>(infos));
+                }
+            }
             /*
             ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(
                     new InfoPlanta(pl2, 3.0, cal.getTime()),

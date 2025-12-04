@@ -1,6 +1,8 @@
 package es.deusto.sd.ecoembes.service;
 
+import es.deusto.sd.ecoembes.dao.PersonalRepository;
 import es.deusto.sd.ecoembes.entity.Personal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,19 +11,20 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
-    static Map<String, Personal> dbPersonal = new HashMap<>();
+    @Autowired
+    private PersonalRepository personalRepository;
     static Map<String, Personal> dbTokensActivos = new HashMap<>();
 
     public void addPersonal(Personal p) {
-        dbPersonal.put(p.getEmail(), p);
+        personalRepository.save(p);
     }
 
     public Optional<String> login(String correo, String contrasena) {
-        Personal personal = dbPersonal.get(correo);
-        if (personal != null && personal.getPassword().equals(contrasena)) {
+        Optional<Personal> personal = personalRepository.findByEmail(correo);
+        if (personal != null && personal.get().getPassword().equals(contrasena)) {
             String token = generateToken();
 
-            dbTokensActivos.put(token, personal);
+            dbTokensActivos.put(token, personal.get());
             return Optional.of(token);
         }else {
             return Optional.empty();
@@ -46,5 +49,8 @@ public class AuthService {
 
     public void addTokenActivo(String number, Personal p1) {
         dbTokensActivos.put(number, p1);
+    }
+    public Personal getPersonalByToken(String token) {
+        return dbTokensActivos.get(token);
     }
 }

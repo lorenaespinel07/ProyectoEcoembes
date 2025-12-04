@@ -2,14 +2,15 @@ package es.deusto.sd.ecoembes.entity;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 
+@Entity
 public class InfoPlanta {
-	//Aqui hay dos logicas
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    private Long id;
+    //Aqui hay dos logicas
 	//1. InfoContendor contiene el id del contenedor referenciado
 	//2. InfoPlanta contiene el objeto planta completo
 	@ManyToOne
@@ -19,9 +20,17 @@ public class InfoPlanta {
 	private double capacidadActual;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaActu;
-	
-	
-	public PlantaReciclaje getPlanta() {
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PlantaReciclaje getPlanta() {
 		return planta;
 	}
 	public void setPlanta(PlantaReciclaje planta) {

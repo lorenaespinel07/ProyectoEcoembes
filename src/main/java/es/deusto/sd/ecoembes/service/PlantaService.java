@@ -1,45 +1,64 @@
 package es.deusto.sd.ecoembes.service;
 
+import es.deusto.sd.ecoembes.dao.AsignacionRepository;
+import es.deusto.sd.ecoembes.dao.InfoPlantaRepository;
+import es.deusto.sd.ecoembes.dao.PlantaReciclajeRepository;
 import es.deusto.sd.ecoembes.entity.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
-
+// eder del futuro boy
 public class PlantaService {
-    static Map<Long, PlantaReciclaje> dbPlantas = new HashMap<>();
-    static Map<Long, List<InfoPlanta>> dbInfoPlanta = new HashMap<>();
-    static ArrayList<Asignacion> dbAsignacion = new ArrayList<>();
+    @Autowired
+    private PlantaReciclajeRepository plantaRepository;
+    @Autowired
+    private InfoPlantaRepository infoPlantaRepository;
+    @Autowired
+    private AsignacionRepository asignacionRepository;
 
     public void addAsignacion(Asignacion a) {
-        dbAsignacion.add(a);
+        asignacionRepository.save(a);
     }
     public void addPlanta(PlantaReciclaje p) {
-        dbPlantas.put(p.getIdplanta(), p);
+        plantaRepository.save(p);
     }
-    public void addInfoPlanta(PlantaReciclaje p, ArrayList<InfoPlanta> lista) {dbInfoPlanta.put(p.getIdplanta(), lista);}
-
+    public void addInfoPlanta(PlantaReciclaje p, ArrayList<InfoPlanta> lista) {
+        infoPlantaRepository.saveAll(lista);
+    }
     public Optional<?> getInfoPlantasPorFecha(Date fecha){
 
-		ArrayList<InfoPlanta> resultado = new ArrayList<>();
-		for (PlantaReciclaje planta : dbPlantas.values()) {
-			List<InfoPlanta> listaInfo = dbInfoPlanta.get(planta.getIdplanta());
-			if (listaInfo != null) {
-				for (InfoPlanta info : listaInfo) {
-					if (compraraDias(info.getFechaActu(), fecha)) {
-						resultado.add(info);
-					}
-				}
-			} else {
-				return Optional.of(new ArrayList<>());
-			}
-		}
-		return Optional.of(resultado);
+        List<PlantaReciclaje> plantas = plantaRepository.findAll();
+        List<InfoPlanta> todasInfos = infoPlantaRepository.findAll();
+
+        ArrayList<InfoPlanta> resultado = new ArrayList<>();
+
+        for (PlantaReciclaje p : plantas) {
+            todasInfos.stream()
+                    .filter(info -> info.getPlanta().getIdplanta() == p.getIdplanta()) // Ajustar según tus getters
+                    .filter(info -> compraraDias(info.getFechaActu(), fecha))
+                    .forEach(resultado::add);
+        }
+        return Optional.of(resultado);
+
 	}
+    // Métodos helper para EcoService
+    public List<PlantaReciclaje> getAllPlantas() {
+        return plantaRepository.findAll();
+    }
+
+    public List<InfoPlanta> getInfoPorPlanta(Long idPlanta) {
+        return infoPlantaRepository.findAll().stream()
+                .filter(i -> i.getPlanta().getIdplanta() == idPlanta)
+                .collect(Collectors.toList());
+    }
+
 
     private static synchronized boolean compraraDias(Date fecha1, Date fecha2) {
 		LocalDate localDate1 = fecha1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

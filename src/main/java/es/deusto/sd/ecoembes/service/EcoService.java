@@ -1,6 +1,7 @@
 package es.deusto.sd.ecoembes.service;
 
 import es.deusto.sd.ecoembes.entity.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 
 @Service
+@Transactional
 public class EcoService {
     @Autowired
     private AuthService authService;
@@ -59,54 +61,66 @@ public class EcoService {
 
     public Optional<String> asignarContenedoresAPlantas(List<Long> idsContenedores, String token){
         if (!authService.validarToken(token)) {
-            //token no valido
             return Optional.of("UNAUTHORIZED");
         }
-        ArrayList<Contenedor> contenedoresAsignados = new ArrayList<>();
-        Personal personal = authService.dbTokensActivos.get(token);
-        PlantaReciclaje plantaAsignada = null;
 
+        // 1. Recuperar Personal (Usuario)
+        Personal personal = authService.getPersonalByToken(token);
+        if (personal == null) return Optional.of("Usuario no encontrado para ese token");
+
+        ArrayList<Contenedor> contenedoresAsignados = new ArrayList<>();
         int envaseTotales = 0;
-        //Lógica de asignación (simplificada)
+
+        // 2. Recuperar Contenedores (usando Servicio, no mapa estático)
         for (Long idContenedor : idsContenedores) {
-            Contenedor contenedor = contenedorService.dbContenedor.get(idContenedor);
-            if (contenedor != null) {
-                //Asignar a la primera planta disponible (simplificado)
-                InfoContenedor infoContendor = getUltimaInfoContenedor(idContenedor);
-                if (infoContendor != null) {
-                    envaseTotales += infoContendor.getNumeroEnvases();
+            Optional<Contenedor> contenedorOpt = contenedorService.buscarPorId(idContenedor);
+
+            if (contenedorOpt.isPresent()) {
+                contenedoresAsignados.add(contenedorOpt.get());
+
+                // Obtener última info (lógica delegada al servicio)
+                InfoContenedor info = contenedorService.getUltimaInfoContenedor(idContenedor);
+                if (info != null) {
+                    envaseTotales += info.getNumeroEnvases();
                 }
             } else {
                 return Optional.of("Contenedor con ID " + idContenedor + " no encontrado.");
             }
         }
 
-        for(PlantaReciclaje planta : PlantaService.dbPlantas.values()) {
-            List<InfoPlanta> listaInfo = PlantaService.dbInfoPlanta.get(planta.getIdplanta());
+        // 3. Buscar Planta (usando Servicio, no mapa estático)
+        List<PlantaReciclaje> todasLasPlantas = plantaService.getAllPlantas();
 
-            if (listaInfo != null) {
-                System.out.println("Info planta encontrada para: " + planta.getNombre());
-                InfoPlanta plantaInfo = listaInfo.get(listaInfo.size() - 1); //Última info
-                System.out.println("Capacidad actual planta " + planta.getNombre() + ": " + plantaInfo.getCapacidadActual()*1000);
-                if (plantaInfo.getCapacidadActual()* 1000 - envaseTotales >= 0) {
-                    //Asignación exitosa
-                    plantaAsignada = planta;
-                    Asignacion asignacion = new Asignacion(contenedoresAsignados, plantaAsignada, personal, new Date());
-                    PlantaService.dbAsignacion.add(asignacion);
-                    return Optional.of("Contenedores asignados a la planta " + plantaInfo.getPlanta().getNombre() + " cantidad estimada de envases: "+ envaseTotales);
+        for(PlantaReciclaje planta : todasLasPlantas) {
+            List<InfoPlanta> listaInfo = plantaService.getInfoPorPlanta(planta.getIdplanta());
+
+            if (listaInfo != null && !listaInfo.isEmpty()) {
+                // Suponemos que la última info es la actual
+                InfoPlanta plantaInfo = listaInfo.get(listaInfo.size() - 1);
+
+                // Comprobar capacidad
+                if (plantaInfo.getCapacidadActual() * 1000 - envaseTotales >= 0) {
+
+                    // ¡Éxito! Crear asignación y guardar
+                    Asignacion asignacion = new Asignacion(contenedoresAsignados, planta, personal, new Date());
+                    plantaService.addAsignacion(asignacion);
+
+                    return Optional.of("Contenedores asignados a la planta " + planta.getNombre() +
+                            " (Cantidad estimada: "+ envaseTotales + ")");
                 }
             }
         }
         return Optional.of("No hay plantas con capacidad suficiente para los envases totales: " + envaseTotales);
     }
 
-    private InfoContenedor getUltimaInfoContenedor(Long idContenedor) {
-        List<InfoContenedor> listaInfo = ContenedorService.dbInfoContenedor.get(idContenedor);
-        if (listaInfo != null && !listaInfo.isEmpty()) {
-            return listaInfo.get(listaInfo.size() - 1);
-        }
-        return null;
-    }
+
+//    private InfoContenedor getUltimaInfoContenedor(Long idContenedor) {
+//        List<InfoContenedor> listaInfo = ContenedorService.dbInfoContenedor.get(idContenedor);
+//        if (listaInfo != null && !listaInfo.isEmpty()) {
+//            return listaInfo.get(listaInfo.size() - 1);
+//        }
+//        return null;
+//    }
 
 
 }

@@ -1,20 +1,17 @@
 package es.deusto.sd.ecoembes.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Contenedor {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id; // identificador 
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    private long id; // identificador
 	
 	@Column(nullable = false)
 	private String ubicacion; 
@@ -24,6 +21,12 @@ public class Contenedor {
 	private int capacidadIni;
 	@Enumerated(EnumType.STRING)
 	private NivelLlenado nivel;
+
+    @OneToMany(mappedBy = "contenedor", cascade = CascadeType.ALL)
+    private List<InfoContenedor> historial = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "contenedores")
+    private List<Asignacion> asignaciones = new ArrayList<>();
 	
 	public long getId() {
 		return id;
@@ -55,17 +58,15 @@ public class Contenedor {
 	public void setNivel(NivelLlenado nivel) {
 		this.nivel = nivel;
 	}
-	public Contenedor(long id, String ubicacion, String cp, int capacidadIni, NivelLlenado nivel) {
+	public Contenedor(String ubicacion, String cp, int capacidadIni, NivelLlenado nivel) {
 		super();
-		this.id = id;
 		this.ubicacion = ubicacion;
 		this.cp = cp;
 		this.capacidadIni = capacidadIni;
 		this.nivel = nivel;
 	}
-	public Contenedor(long id, String ubicacion, String cp, int capacidadIni) {
+	public Contenedor(String ubicacion, String cp, int capacidadIni) {
 		super();
-		this.id = id;
 		this.ubicacion = ubicacion;
 		this.cp = cp;
 		this.capacidadIni = capacidadIni;

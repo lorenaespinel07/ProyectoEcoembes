@@ -3,18 +3,15 @@ package es.deusto.sd.ecoembes.entity;
 import java.util.Date;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-
+import jakarta.persistence.*;
+@Entity
 public class InfoContenedor {
-	
-	//Creo que hay que cambiar esta logica
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    private Long id;
+    //Creo que hay que cambiar esta logica
 	//Para mi yo del futuro:
 	//Igual quieres que en vez del id se alamacene 
 	//la referencia al objeto
@@ -27,25 +24,38 @@ public class InfoContenedor {
 	private NivelLlenado nivelLlenado;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaActu;
-	
-	
-	public Date getFechaActu() {
+
+    @ManyToOne
+    @JoinColumn(name = "contenedor_id")
+    private Contenedor contenedor;
+
+
+
+    public Date getFechaActu() {
 		return fechaActu;
 	}
 	public void setFechaActu(Date fechaActu) {
 		this.fechaActu = fechaActu;
 	}
 	
-	public InfoContenedor(long idContenedor, int numeroEnvases, NivelLlenado nivelLlenado, Date fechaActu) {
+	public InfoContenedor(Contenedor contenedor, int numeroEnvases, NivelLlenado nivelLlenado, Date fechaActu) {
 		super();
-		this.idContenedor = idContenedor;
+        this.contenedor = contenedor;
 		this.numeroEnvases = numeroEnvases;
 		this.nivelLlenado = nivelLlenado;
 		this.fechaActu = fechaActu;
 	}
 	public InfoContenedor() {}
-	
-	public long getIdContenedor() {
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public long getIdContenedor() {
 		return idContenedor;
 	}
 	public void setIdContenedor(long idContenedor) {
@@ -79,6 +89,13 @@ public class InfoContenedor {
 		return Objects.equals(fechaActu, other.fechaActu) && idContenedor == other.idContenedor
 				&& nivelLlenado == other.nivelLlenado && numeroEnvases == other.numeroEnvases;
 	}
-	
-	
+
+
+    public void setContenedor(Contenedor c) {
+        this.contenedor = c;
+    }
+
+    public Contenedor getContenedor() {
+        return this.contenedor;
+    }
 }

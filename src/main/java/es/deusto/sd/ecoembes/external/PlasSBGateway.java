@@ -22,7 +22,7 @@ public class PlasSBGateway implements IPlantaGateway{
 	private final String PLAS_SB_URL = "http://localhost:8081/plassb/disponibilidad";
 	private final HttpClient httpClient;
 	private final ObjectMapper objectMapper;
-	private final PlantaReciclaje planta = new PlantaReciclaje(1245, "PlasSB Ltd.", 2);
+	private final PlantaReciclaje planta = new PlantaReciclaje("PlasSB Ltd.", 2);
 	
 	public PlasSBGateway() {
 		this.httpClient = HttpClient.newHttpClient();

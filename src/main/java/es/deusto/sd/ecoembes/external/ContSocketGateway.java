@@ -22,7 +22,7 @@ public class ContSocketGateway implements IPlantaGateway{
 	private String serverIP;
 	private int serverPort;
 	private static String DELIMITAR = "#";
-	private PlantaReciclaje plantaReciclaje= new PlantaReciclaje(489, "ContSocket Ltd.", 4); 	
+	private PlantaReciclaje plantaReciclaje= new PlantaReciclaje("ContSocket Ltd.", 4);
 	public ContSocketGateway() {
 		this.serverIP = "127.0.0.1";
 		this.serverPort = 9500;

@@ -1,13 +1,33 @@
 package es.deusto.sd.ecoembes.entity;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+@Entity
 public class Asignacion {
     //private long idAsignacion
-    private ArrayList<Contenedor> contenedores;
-    private PlantaReciclaje planta;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long idAsignacion;
+    @ManyToOne
+    @JoinColumn(name = "personal_id")
     private Personal personal;
+
+    @ManyToOne
+    @JoinColumn(name = "planta_id")
+    private PlantaReciclaje planta;
+
+    @ManyToMany
+    @JoinTable(
+            name = "asignacion_contenedores",
+            joinColumns = @JoinColumn(name = "asignacion_id"),
+            inverseJoinColumns = @JoinColumn(name = "contenedor_id"))
+    private List<Contenedor> contenedores = new ArrayList<>();
+
+
     public Asignacion(ArrayList<Contenedor> contenedores, PlantaReciclaje planta, Personal personal,
 			Date fechaAsignacion) {
 		super();
@@ -17,16 +37,12 @@ public class Asignacion {
 		this.fechaAsignacion = fechaAsignacion;
 	}
 	private Date fechaAsignacion;
-//	public long getIdAsignacion() {
-//		return idAsignacion;
-//	}
-//	public void setIdAsignacion(long idAsignacion) {
-//		this.idAsignacion = idAsignacion;
-//	}
-	public ArrayList<Contenedor> getContenedores() {
-		return contenedores;
-	}
-	public void setContenedores(ArrayList<Contenedor> contenedores) {
+
+    public Asignacion() {
+
+    }
+
+    public void setContenedores(ArrayList<Contenedor> contenedores) {
 		this.contenedores = contenedores;
 	}
 	public PlantaReciclaje getPlanta() {

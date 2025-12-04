@@ -1,20 +1,18 @@
 package es.deusto.sd.ecoembes.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import es.deusto.sd.ecoembes.entity.Asignacion;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "personal")
 public class Personal {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private long idpersonal;
 	
 	@Column(nullable = false, unique= true)
@@ -23,16 +21,24 @@ public class Personal {
     private String email;
     @Column(nullable = false)
     private String password; //Esto no es muy seguro btw
+
+    @OneToMany(mappedBy = "personal")
+    private List<Asignacion> asignacionesRealizadas = new ArrayList<>();
 	
     
-    public Personal(long idpersonal, String nombre, String email, String password) {
+    public Personal(String nombre, String email, String password) {
 		super();
-		this.idpersonal = idpersonal;
+
 		this.nombre = nombre;
 		this.email = email;
 		this.password = password;
 	}
-	public String getPassword() {
+
+    public Personal() {
+
+    }
+
+    public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {

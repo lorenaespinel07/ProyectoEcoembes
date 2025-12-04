@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import es.deusto.sd.ecoembes.entity.InfoPlanta;
 
 @Repository
-public interface InfoPlantaRepository extends JpaRepository<List<InfoPlanta>, Long>{
+public interface InfoPlantaRepository extends JpaRepository<InfoPlanta, Long>{
 
 }
