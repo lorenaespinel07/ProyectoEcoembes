@@ -13,7 +13,7 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private PersonalRepository personalRepository;
-    static Map<String, Personal> dbTokensActivos = new HashMap<>();
+    public static Map<String, Personal> dbTokensActivos = new HashMap<>();
 
     public void addPersonal(Personal p) {
         personalRepository.save(p);

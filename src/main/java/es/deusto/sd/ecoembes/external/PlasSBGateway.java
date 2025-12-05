@@ -56,6 +56,7 @@ public class PlasSBGateway implements IPlantaGateway{
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			if (response.statusCode() == 200) {
 				//System.out.println("Response body: " + response.body());
+				//System.out.println(Double.parseDouble(response.body()));
 				return Double.parseDouble(response.body());
 			}
 		} catch (Exception e) {

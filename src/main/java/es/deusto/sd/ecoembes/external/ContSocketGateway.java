@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class ContSocketGateway implements IPlantaGateway{
 	public Optional<ArrayList<InfoPlanta>> getInfosPlanta() {
 		ContSocketGateway contSocketGateway = new ContSocketGateway();
 		String respuesta = contSocketGateway.mandarMensaje("GET INFO");
-		SimpleDateFormat formato = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		SimpleDateFormat formato = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 		if (respuesta != null && !respuesta.isEmpty()) {
 			String[] partes = respuesta.split("\n");
 			ArrayList<InfoPlanta> infosPlanta = new ArrayList<>();

@@ -33,7 +33,14 @@ public class DataInitializer {
                                ContenedorRepository contenedorRepository) {
 
         return args -> {
-            if (contenedorRepository.count() > 0) {
+            
+        	if (contenedorRepository.count() > 0){        		
+        		for (PlantaReciclaje p : plantaService.getAllPlantas()) {
+        			System.out.println("Planta existente: " + p.getNombre());
+        		}
+        		for (String token : AuthService.dbTokensActivos.keySet()) {
+        			System.out.println("Token activo existente: " + token);
+        		}
                 return;
             }
 
@@ -42,7 +49,7 @@ public class DataInitializer {
 
             Personal p2 = new Personal("Regular User", "user@ecoembes.com", "sincontraseña");
             authService.addPersonal(p2);
-
+            
             authService.addTokenActivo("1", p1);
             authService.addTokenActivo("9876yhn54gh", p2);
 
