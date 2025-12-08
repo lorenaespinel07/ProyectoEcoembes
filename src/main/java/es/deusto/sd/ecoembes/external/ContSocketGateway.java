@@ -28,7 +28,7 @@ public class ContSocketGateway implements IPlantaGateway{
 		this.serverIP = "127.0.0.1";
 		this.serverPort = 9500;
 	}
-	
+	/*
 	@Override
 	public Optional<ArrayList<InfoPlanta>> getInfosPlanta() {
 		ContSocketGateway contSocketGateway = new ContSocketGateway();
@@ -41,18 +41,20 @@ public class ContSocketGateway implements IPlantaGateway{
 				String[] atributos = parte.split(DELIMITAR);
 				double cantidadReciclada = Double.parseDouble(atributos[1]);
 				try {
-		            Date fechaParseada = formato.parse(atributos[2]);
-		            InfoPlanta infoPlanta = new InfoPlanta(plantaReciclaje, cantidadReciclada, fechaParseada);
-		            infosPlanta.add(infoPlanta);
-		            //System.out.println("Fecha parseada: " + fechaParseada);
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
+					Date fechaParseada = formato.parse(atributos[2]);
+					InfoPlanta infoPlanta = new InfoPlanta(plantaReciclaje, cantidadReciclada, fechaParseada);
+					infosPlanta.add(infoPlanta);
+					//System.out.println("Fecha parseada: " + fechaParseada);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			return Optional.of(infosPlanta);
 		}
 		return Optional.empty();
 	}
+	*/
+	
 	public String mandarMensaje(String mensaje){
 		String resultado = null;
 		try (Socket socket = new Socket(serverIP, serverPort);
@@ -78,6 +80,18 @@ public class ContSocketGateway implements IPlantaGateway{
 			System.err.println(" # Trans. SocketClient: IO error: " + e.getMessage());
 		}
 		return resultado;
+	}
+
+	@Override
+	public Optional<InfoPlanta> getInfoPlantaPorFecha(Date fecha) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<String> enviarAsignacionPlanta(int numeroContenedores, int cantidadEnvases) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 	
 }

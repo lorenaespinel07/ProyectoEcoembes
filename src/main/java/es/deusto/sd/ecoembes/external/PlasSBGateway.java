@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class PlasSBGateway implements IPlantaGateway{
 		this.httpClient = HttpClient.newHttpClient();
 		this.objectMapper = new ObjectMapper();
 	}
-	
+	/*
 	@Override
 	public Optional<ArrayList<InfoPlanta>> getInfosPlanta() {
 		String fecha1 =  "2025-11-12";
@@ -46,6 +47,7 @@ public class PlasSBGateway implements IPlantaGateway{
 		infos.add(new InfoPlanta(planta, capacidad2, cal2.getTime()));
 		return Optional.of(infos);
 	}
+	*/
 	public double getCapacidadPlanta(String fecha) {
 		String url = PLAS_SB_URL + "?fecha=" + fecha;
 		try {
@@ -63,6 +65,16 @@ public class PlasSBGateway implements IPlantaGateway{
 			e.printStackTrace();
 		}
 		return 0.0;
+	}
+	@Override
+	public Optional<InfoPlanta> getInfoPlantaPorFecha(Date fecha) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+	@Override
+	public Optional<String> enviarAsignacionPlanta(int numeroContenedores, int cantidadEnvases) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 
 }

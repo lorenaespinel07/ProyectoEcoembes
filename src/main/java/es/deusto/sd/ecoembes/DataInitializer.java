@@ -41,6 +41,11 @@ public class DataInitializer {
         		for (String token : AuthService.dbTokensActivos.keySet()) {
         			System.out.println("Token activo existente: " + token);
         		}
+        		for (Contenedor c : contenedorService.getAllContenedores()) {
+        			System.out.println("Contenedor existente: " + c.getUbicacion());
+        		}
+                Personal p1 = new Personal("Paquito el pro", "admin@ecoembes.com", "ojolero");
+        		authService.addTokenActivo("1", p1);
                 return;
             }
 
@@ -108,7 +113,6 @@ public class DataInitializer {
                     new InfoPlanta(pl1, 1.0, cal2.getTime())
             ));
             plantaService.addInfoPlanta(pl1, infoPlanta1);
-            */
             IPlantaGateway plasSBPlanta = factory.getPlanta(tipoPlanta.PlasSB);
             if (plasSBPlanta != null) {
                 var infosOpt = plasSBPlanta.getInfosPlanta();
@@ -118,7 +122,9 @@ public class DataInitializer {
                     plantaService.addInfoPlanta(pl1, new ArrayList<>(infos));
                 }
             }
+            */
             
+            /*
             IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
             if (contsocketPlanta != null) {
                 var infosOpt = contsocketPlanta.getInfosPlanta();
@@ -129,7 +135,6 @@ public class DataInitializer {
                     plantaService.addInfoPlanta(pl2, new ArrayList<>(infos));
                 }
             }
-            /*
             ArrayList<InfoPlanta> infoPlanta2 = new ArrayList<>(List.of(
                     new InfoPlanta(pl2, 3.0, cal.getTime()),
                     new InfoPlanta(pl2, 2.5, cal3.getTime())

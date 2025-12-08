@@ -23,6 +23,11 @@ public class ContenedorService {
 
     @Autowired
     private InfoContenedorRepository infoContenedorRepository;
+    
+    
+    public List<Contenedor> getAllContenedores() {
+		return contenedorRepository.findAll();
+	}
 
     public void addContenedor(Contenedor c) {
         contenedorRepository.save(c);

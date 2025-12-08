@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 // eder del futuro boy
 public class PlantaService {
     @Autowired
-    private PlantaReciclajeRepository plantaRepository;
+    private PlantaReciclajeRepository plantaRepository;	
     @Autowired
     private InfoPlantaRepository infoPlantaRepository;
     @Autowired
