@@ -23,7 +23,6 @@ public class AuthService {
         Optional<Personal> personal = personalRepository.findByEmail(correo);
         if (personal != null && personal.get().getPassword().equals(contrasena)) {
             String token = generateToken();
-
             dbTokensActivos.put(token, personal.get());
             return Optional.of(token);
         }else {

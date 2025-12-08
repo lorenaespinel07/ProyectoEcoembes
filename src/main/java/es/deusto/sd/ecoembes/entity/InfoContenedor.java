@@ -3,6 +3,7 @@ package es.deusto.sd.ecoembes.entity;
 import java.util.Date;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 @Entity
 public class InfoContenedor {
@@ -15,8 +16,10 @@ public class InfoContenedor {
 	//Para mi yo del futuro:
 	//Igual quieres que en vez del id se alamacene 
 	//la referencia al objeto
-	@Column(nullable = false)
-	private long idContenedor;
+    @ManyToOne
+    @JoinColumn(name = "id_contenedor", nullable = false)
+    @JsonIgnore
+    private Contenedor contenedor;
 	
 	@Column(nullable = false)
 	private int numeroEnvases;
@@ -25,9 +28,7 @@ public class InfoContenedor {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaActu;
 
-    @ManyToOne
-    @JoinColumn(name = "contenedor_id")
-    private Contenedor contenedor;
+
 
 
 
@@ -56,10 +57,7 @@ public class InfoContenedor {
     }
 
     public long getIdContenedor() {
-		return idContenedor;
-	}
-	public void setIdContenedor(long idContenedor) {
-		this.idContenedor = idContenedor;
+		return contenedor.getId();
 	}
 	public int getNumeroEnvases() {
 		return numeroEnvases;
@@ -75,7 +73,7 @@ public class InfoContenedor {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(fechaActu, idContenedor, nivelLlenado, numeroEnvases);
+		return Objects.hash(fechaActu, contenedor.getId(), nivelLlenado, numeroEnvases);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -86,7 +84,7 @@ public class InfoContenedor {
 		if (getClass() != obj.getClass())
 			return false;
 		InfoContenedor other = (InfoContenedor) obj;
-		return Objects.equals(fechaActu, other.fechaActu) && idContenedor == other.idContenedor
+		return Objects.equals(fechaActu, other.fechaActu) && contenedor.getId() == other.contenedor.getId()
 				&& nivelLlenado == other.nivelLlenado && numeroEnvases == other.numeroEnvases;
 	}
 

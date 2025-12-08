@@ -1,5 +1,6 @@
 package es.deusto.sd.ecoembes.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -14,10 +15,12 @@ public class Asignacion {
     private long idAsignacion;
     @ManyToOne
     @JoinColumn(name = "personal_id")
+    @JsonIgnore
     private Personal personal;
 
     @ManyToOne
     @JoinColumn(name = "planta_id")
+    @JsonIgnore
     private PlantaReciclaje planta;
 
     @ManyToMany
@@ -25,6 +28,7 @@ public class Asignacion {
             name = "asignacion_contenedores",
             joinColumns = @JoinColumn(name = "asignacion_id"),
             inverseJoinColumns = @JoinColumn(name = "contenedor_id"))
+    @JsonIgnore
     private List<Contenedor> contenedores = new ArrayList<>();
 
 

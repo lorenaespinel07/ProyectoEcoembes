@@ -1,8 +1,9 @@
 package es.deusto.sd.ecoembes.facade;
 
 import es.deusto.sd.ecoembes.dto.*;
-import es.deusto.sd.ecoembes.service.EcoService;
+import es.deusto.sd.ecoembes.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,11 +20,9 @@ import java.util.Optional;
 @Tag(name = "Auth Controller", description = "Operaciones de Autenticación")
 
 public class AuthController {
-    private final EcoService ecoService;
 
-    public AuthController(EcoService authService) {
-        this.ecoService = authService;
-    }
+    @Autowired
+    private AuthService authService;
 
     @Operation(
             summary = "login al sistema",
@@ -39,7 +38,7 @@ public class AuthController {
     public ResponseEntity<String> login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Credenciales del usuario", required = true)
             @RequestBody LoginDTO loginDTO) {
-        Optional<String> token = ecoService.login(loginDTO.getCorreo(), loginDTO.getContrasena());
+        Optional<String> token = authService.login(loginDTO.getCorreo(), loginDTO.getContrasena());
         if (token.isPresent()) {
             return new ResponseEntity<>(token.get(), HttpStatus.OK);
         } else {
@@ -63,7 +62,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Token a invalidar en texto plano", required = true)
             @RequestBody LogoutDTO logoutDTO) {
-        Optional<Boolean> result = ecoService.logout(logoutDTO.getToken());
+        Optional<Boolean> result = authService.logout(logoutDTO.getToken());
 
         if (result.isPresent() && result.get()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

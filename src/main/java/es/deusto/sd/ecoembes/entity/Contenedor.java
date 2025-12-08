@@ -27,7 +27,10 @@ public class Contenedor {
 
     @ManyToMany(mappedBy = "contenedores")
     private List<Asignacion> asignaciones = new ArrayList<>();
-	
+
+    public List<InfoContenedor> getHistorial() {
+        return historial;
+    }
 	public long getId() {
 		return id;
 	}

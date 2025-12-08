@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Optional;
 
+import es.deusto.sd.ecoembes.service.AuthService;
+import es.deusto.sd.ecoembes.service.ContenedorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import es.deusto.sd.ecoembes.dto.*;
 import es.deusto.sd.ecoembes.entity.*;
-import es.deusto.sd.ecoembes.service.EcoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,11 +29,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Contenedor Controller", description = "Operaciones de Contenedores y Sensores")
 public class ContenedorController {
 
-    private final EcoService ecoService;
-
-    public ContenedorController(EcoService ecoService) {
-        this.ecoService = ecoService;
-    }
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private ContenedorService contenedorService;
 
     @Operation(
             summary = "Actualizar información del contenedor",
@@ -44,9 +45,10 @@ public class ContenedorController {
     )
     @PostMapping("/actualizacion")
     public ResponseEntity<InfoContenedorDTO> actualizarInfoContenedor(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del contenedor a actualizar", required = true)
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del contenedor a actualizar",required = true)
             @RequestBody InfoContenedorDTO infoContenedorDTO){
-        Optional<InfoContenedor> infoContenedor = ecoService.actualizarInfoContenedor(
+
+        Optional<InfoContenedor> infoContenedor = contenedorService.actualizarInfoContenedor(
                 infoContenedorDTO.getIdContendor(),
                 infoContenedorDTO.getNumEstimado(),
                 infoContenedorDTO.getNivelLlenado()
@@ -71,14 +73,13 @@ public class ContenedorController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del contenedor a crear", required = true)
             @RequestBody ContenedorDTO contenedorDTO){
 
-        Optional<?> contenedor = ecoService.crearContenedor(contenedorDTO.getIdContenedor(),
+        if (!authService.validarToken(contenedorDTO.getToken())) {
+            return new ResponseEntity<>("Token no válido", HttpStatus.UNAUTHORIZED);
+        }
+        Optional<?> contenedor = contenedorService.crearContenedor(contenedorDTO.getIdContenedor(),
                 contenedorDTO.getDireccion(), contenedorDTO.getCp(), contenedorDTO.getCapacidadIni(),
                 contenedorDTO.getToken());
-
         if (contenedor.isPresent()) {
-            if (contenedor.get() instanceof String) {
-                return new ResponseEntity<>((String) contenedor.get(), HttpStatus.UNAUTHORIZED);
-            }
             return new ResponseEntity<>(contenedor.get(), HttpStatus.CREATED);
 
         } else {
@@ -113,7 +114,7 @@ public class ContenedorController {
         Calendar calFin = Calendar.getInstance();
         calFin.set(fechaFin.getYear(), fechaFin.getMonthValue(), fechaFin.getDayOfMonth());
 
-        Optional<?> infoContenedor = ecoService.getInfoContendorPorFecha(id,
+        Optional<?> infoContenedor = contenedorService.getInfoContendorPorFecha(id,
                 calIni.getTime(), calFin.getTime(), token);
         if (infoContenedor.isPresent()) {
             if (infoContenedor.get() instanceof String) {
@@ -147,7 +148,7 @@ public class ContenedorController {
         Calendar cal = Calendar.getInstance();
         cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue(), fechaLocal.getDayOfMonth());
 
-        Optional<?> infoContenedor = ecoService.getInfoContenedorPorZona(cp, cal.getTime(),token);
+        Optional<?> infoContenedor = contenedorService.getInfoContenedorPorZona(cp, cal.getTime(),token);
 
         if (infoContenedor.isPresent()) {
             if (infoContenedor.get() instanceof String) {
@@ -155,7 +156,7 @@ public class ContenedorController {
             }
             return new ResponseEntity<>(infoContenedor.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

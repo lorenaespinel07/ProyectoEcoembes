@@ -2,6 +2,7 @@ package es.deusto.sd.ecoembes.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,7 @@ public class InfoPlanta {
 	//2. InfoPlanta contiene el objeto planta completo
 	@ManyToOne
 	@JoinColumn(name = "planta_id", nullable = false)
+    @JsonIgnore
 	private PlantaReciclaje planta;
 	@Column(nullable = false)
 	private double capacidadActual;

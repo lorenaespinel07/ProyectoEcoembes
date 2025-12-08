@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Optional;
 
+import es.deusto.sd.ecoembes.service.AuthService;
+import es.deusto.sd.ecoembes.service.PlantaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.deusto.sd.ecoembes.dto.*;
-import es.deusto.sd.ecoembes.entity.*;
-import es.deusto.sd.ecoembes.service.EcoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,11 +26,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/eco/planta")
 @Tag(name = "Planta Controller", description = "Operaciones de Plantas y Asignaciones")
 public class PlantaController {
-    private final EcoService ecoService; // Inyecta el Facade
 
-    public PlantaController(EcoService ecoService) {
-        this.ecoService = ecoService;
-    }
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private PlantaService plantaService;
+
     @Operation(summary = "Obtener capacidad de plantas por fecha", description = "Permite obtener la capacidad de las plantas en una fecha específica utilizando un token.", responses = {
             @ApiResponse(responseCode = "200", description = "OK: Capacidad de las plantas obtenida correctamente"),
             @ApiResponse(responseCode = "400", description = "Bad Request: Datos inválidos para la consulta"),
@@ -47,14 +50,14 @@ public class PlantaController {
         LocalDate fechaLocal = LocalDate.parse(textoFecha);
         Calendar cal = Calendar.getInstance();
         cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue(), fechaLocal.getDayOfMonth());
-        Optional<?> plantas = ecoService.getInfoPlantasPorFecha(cal.getTime(), token);
+        Optional<?> plantas = plantaService.getInfoPlantasPorFecha(cal.getTime(), token);
         if (plantas.isPresent()) {
             if (plantas.get() instanceof String) {
                 return new ResponseEntity<>((String) plantas.get(), HttpStatus.UNAUTHORIZED);
             }
             return new ResponseEntity<>(plantas.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -69,7 +72,7 @@ public class PlantaController {
             @RequestBody AsignacionDTO asignacionDTO
     ) {
 
-        Optional<?> asignacion = ecoService.asignarContenedoresAPlantas(asignacionDTO.getIdContenedores(),asignacionDTO.getToken());
+        Optional<?> asignacion = plantaService.asignarContenedoresAPlantas(asignacionDTO.getIdContenedores(),asignacionDTO.getToken());
 
         if (asignacion.isPresent()) {
             if (asignacion.get().equals("UNAUTHORIZED")) {
@@ -79,5 +82,4 @@ public class PlantaController {
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    }
-}
+    }}

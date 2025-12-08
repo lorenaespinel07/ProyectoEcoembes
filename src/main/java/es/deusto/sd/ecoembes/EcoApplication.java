@@ -17,6 +17,9 @@ public class EcoApplication {
         System.out.println("=================================================================");
         System.out.println("Swagger UI listo. Accede en:");
         System.out.println("http://localhost:8080/swagger-ui/index.html#"); // O el puerto que uses
+        System.out.println("H2 bd listo. Accede en:");
+        System.out.println("http://localhost:8080/h2-console");
+        System.out.println(" Accede con JDBC URL: jdbc:h2:file:./data/ecodb");
         System.out.println("=================================================================");
 	}
 }
