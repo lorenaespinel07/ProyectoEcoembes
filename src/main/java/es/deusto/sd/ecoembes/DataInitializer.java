@@ -99,13 +99,13 @@ public class DataInitializer {
 
 
             PlantaFactory factory = new PlantaFactory();
-            PlantaReciclaje pl1 = new PlantaReciclaje("PlasSB Ltd.", 2);
-            PlantaReciclaje pl2 = new PlantaReciclaje("ContSocket Ltd.", 4);
-            PlantaReciclaje pl3 = new PlantaReciclaje("EcoRecicla SA.", 3);
+            PlantaReciclaje pl1 = new PlantaReciclaje("PlasSB", 2);
+            PlantaReciclaje pl2 = new PlantaReciclaje("ContSocket", 4);
+            //PlantaReciclaje pl3 = new PlantaReciclaje("EcoRecicla", 3);
 
             plantaService.addPlanta(pl1);
             plantaService.addPlanta(pl2);
-            plantaService.addPlanta(pl3);
+            //plantaService.addPlanta(pl3);
 
             /*
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
@@ -141,11 +141,13 @@ public class DataInitializer {
             ));
             plantaService.addInfoPlanta(pl2, infoPlanta2);
 			*/
+            /*
             ArrayList<InfoPlanta> infoPlanta3 = new ArrayList<>(List.of(
             		new InfoPlanta(pl3, 2.0, cal3.getTime()),
             		new InfoPlanta(pl3, 1.0, cal4.getTime())
             		));
             plantaService.addInfoPlanta(pl3, infoPlanta3);
+            */
 
         };
     }

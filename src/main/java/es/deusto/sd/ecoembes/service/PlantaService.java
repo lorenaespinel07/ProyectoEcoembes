@@ -3,6 +3,9 @@ package es.deusto.sd.ecoembes.service;
 import es.deusto.sd.ecoembes.dao.AsignacionRepository;
 import es.deusto.sd.ecoembes.dao.PlantaReciclajeRepository;
 import es.deusto.sd.ecoembes.entity.*;
+import es.deusto.sd.ecoembes.external.IPlantaGateway;
+import es.deusto.sd.ecoembes.external.PlantaFactory;
+import es.deusto.sd.ecoembes.external.PlantaFactory.tipoPlanta;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,11 +49,18 @@ public class PlantaService {
         List<PlantaReciclaje> plantas = plantaRepository.findAll();
 
         ArrayList<InfoPlanta> resultado = new ArrayList<>();
-
+        PlantaFactory factory = new PlantaFactory();
         for (PlantaReciclaje p : plantas) {
+        	/*
             p.getHistorial().stream()
                     .filter(info -> compraraDias(info.getFechaActu(), fecha))
                     .forEach(resultado::add);
+        	*/
+        	IPlantaGateway gateway = factory.getPlanta(tipoPlanta.valueOf(p.getNombre()));
+        	if (gateway != null) {
+				Optional<InfoPlanta> infoOpt = gateway.getInfoPlantaPorFecha(fecha);
+				infoOpt.ifPresent(resultado::add);
+			}
         }
         return Optional.of(resultado);
 	}
@@ -97,6 +107,11 @@ public class PlantaService {
                 // Comprobar capacidad
                 if (plantaInfo.getCapacidadActual() * 1000 - envaseTotales >= 0) {
                     Asignacion asignacion = new Asignacion(contenedoresAsignados, planta, personal, new Date());
+                    PlantaFactory factory = new PlantaFactory();
+                    IPlantaGateway gateway = factory.getPlanta(tipoPlanta.valueOf(planta.getNombre()));
+                    if (gateway != null) {
+						gateway.enviarAsignacionPlanta(idsContenedores.size(), envaseTotales);
+					}
                     asignacionRepository.save(asignacion);
                     return Optional.of("Contenedores asignados a la planta " + planta.getNombre() +
                             " (Cantidad estimada: "+ envaseTotales + ")");
@@ -140,5 +155,8 @@ public class PlantaService {
 //            }
 //        }
 //    }
+	public List<PlantaReciclaje> getAllPlantas() {
+		return plantaRepository.findAll();
+	}
 }
 

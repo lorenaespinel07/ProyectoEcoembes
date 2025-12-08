@@ -48,8 +48,11 @@ public class PlantaController {
     ) {
         String textoFecha = Fecha;
         LocalDate fechaLocal = LocalDate.parse(textoFecha);
+        System.out.println("Fecha parseada: " + fechaLocal.getYear() + "-" + fechaLocal.getMonthValue() + "-" + fechaLocal.getDayOfMonth());
         Calendar cal = Calendar.getInstance();
-        cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue(), fechaLocal.getDayOfMonth());
+        cal.clear();
+        cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue(), fechaLocal.getDayOfMonth(), 3, 00);
+        System.out.println(Fecha+"Fecha consultada: " + cal.getTime());
         Optional<?> plantas = plantaService.getInfoPlantasPorFecha(cal.getTime(), token);
         if (plantas.isPresent()) {
             if (plantas.get() instanceof String) {
