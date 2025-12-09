@@ -45,7 +45,9 @@ public class PlantaService {
     }
     //GET
     public Optional<?> getInfoPlantasPorFecha(Date fecha, String token) {
-
+    	if (!AuthService.validarToken(token)) {
+            return Optional.of("UNAUTHORIZED");
+        }
         List<PlantaReciclaje> plantas = plantaRepository.findAll();
         ArrayList<InfoPlanta> resultado = new ArrayList<>();
         PlantaFactory factory = new PlantaFactory();

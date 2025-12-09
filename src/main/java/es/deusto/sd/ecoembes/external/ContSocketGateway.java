@@ -3,14 +3,16 @@ package es.deusto.sd.ecoembes.external;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.springframework.stereotype.Component;
 
@@ -25,8 +27,16 @@ public class ContSocketGateway implements IPlantaGateway{
 	private static String DELIMITAR = "#";
 	private PlantaReciclaje plantaReciclaje= new PlantaReciclaje("ContSocket Ltd.", 4);
 	public ContSocketGateway() {
-		this.serverIP = "127.0.0.1";
-		this.serverPort = 9500;
+		Properties props = new Properties();
+		try (FileInputStream fis = new FileInputStream("src/main/resources/application.properties")){
+			props.load(fis);
+			this.serverIP = props.getProperty("ContSocket.server.ip");
+			this.serverPort = Integer.parseInt(props.getProperty("ContSocket.server.port"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//this.serverIP = "127.0.0.1";
+		//this.serverPort = 9500;
 	}
 	/*
 	@Override
@@ -114,7 +124,30 @@ public class ContSocketGateway implements IPlantaGateway{
 
     @Override
     public double getCapacidadPlanta(String fecha) {
-        return 0;
+    	double capacidad = 0.0;
+    	System.out.println("Fecha recibida: " + fecha);
+    	String[] fechaStr0 = fecha.split("-");
+    	Calendar cal = Calendar.getInstance();
+    	cal.clear();
+    	cal.set(Integer.parseInt(fechaStr0[0]), Integer.parseInt(fechaStr0[1]) - 1, Integer.parseInt(fechaStr0[2]), 3, 00);
+    	String fechaStr = cal.getTime().toString();
+		System.out.println("Fecha a buscar: " + fechaStr);
+		ContSocketGateway contSocketGateway = new ContSocketGateway();
+		String respuesta = contSocketGateway.mandarMensaje("GET INFO"+DELIMITAR + fechaStr);
+		System.out.println("Respuesta recibida: " + respuesta);
+		SimpleDateFormat formato = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+		if (respuesta != null && !respuesta.isEmpty()) {
+			String[] partes = respuesta.split("\n");
+			//Modelo de datos #id#capacidadActual#fechaActu\n
+			for (String parte : partes) {
+				String[] atributos = parte.split(DELIMITAR);
+				double cantidadReciclada = Double.parseDouble(atributos[0]);
+				capacidad = cantidadReciclada;
+			}
+			return capacidad;
+		}
+		
+		return capacidad;
     }
 
     @Override

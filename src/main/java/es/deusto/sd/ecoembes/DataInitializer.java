@@ -88,7 +88,7 @@ public class DataInitializer {
 
             ArrayList<InfoContenedor> actualizacionesc2 = new ArrayList<>(List.of(
                     new InfoContenedor(c2, 500, NivelLlenado.VERDE, cal.getTime()),
-                    new InfoContenedor(c2, 1500, NivelLlenado.NARANJA, cal2.getTime())
+                    new InfoContenedor(c2, 500, NivelLlenado.NARANJA, cal2.getTime())
             ));
             contenedorService.addInfoContenedor(c2, actualizacionesc2);
 
@@ -102,15 +102,15 @@ public class DataInitializer {
 
             PlantaFactory factory = new PlantaFactory();
             PlantaReciclaje pl1 = new PlantaReciclaje("PlasSB", 2);
-            PlantaReciclaje pl2 = new PlantaReciclaje("ContSocket", 4);
+            PlantaReciclaje pl2 = new PlantaReciclaje("ContSocket", 10);
             //PlantaReciclaje pl3 = new PlantaReciclaje("EcoRecicla", 3);
 
             plantaService.addPlanta(pl1);
             plantaService.addPlanta(pl2);
             //plantaService.addPlanta(pl3);
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
-                    new InfoPlanta(pl1, 4.0, cal2.getTime()),
-                    new InfoPlanta(pl1, 3.5, cal3.getTime())
+                    new InfoPlanta(pl1, 1.0, cal2.getTime()),
+                    new InfoPlanta(pl1, 0.5, cal3.getTime())
             ));
             plantaService.addInfoPlanta(pl1, infoPlanta1);
             /*
@@ -129,7 +129,18 @@ public class DataInitializer {
                 }
             }
             */
-            
+            ArrayList<InfoPlanta> infoPlanta = new ArrayList<>();
+            for (int i = 1; i < 5; i++) {
+				Calendar calTemp = Calendar.getInstance();
+				calTemp.clear();
+				calTemp.set(2025, Calendar.DECEMBER, i, 3, 00);
+				String fechaStr = "2025-12-0" + i ;
+            	IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
+				double capacidad = contsocketPlanta.getCapacidadPlanta(fechaStr);
+				InfoPlanta info = new InfoPlanta(pl2, capacidad, calTemp.getTime());
+				infoPlanta.add(info);
+			}
+            plantaService.addInfoPlanta(pl2, infoPlanta);
             /*
             IPlantaGateway contsocketPlanta = factory.getPlanta(tipoPlanta.ContSocket);
             if (contsocketPlanta != null) {
