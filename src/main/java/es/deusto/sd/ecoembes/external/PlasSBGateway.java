@@ -1,5 +1,6 @@
 package es.deusto.sd.ecoembes.external;
 
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -21,15 +22,22 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class PlasSBGateway implements IPlantaGateway{
 
-	private final String PLAS_SB_URL = "http://localhost:8081/plassb/capacidad";
 	private final HttpClient httpClient;
 	private final ObjectMapper objectMapper;
 	private final PlantaReciclaje planta = new PlantaReciclaje("PlasSB Ltd.", 2);
-    private final String URL_BASE = "http://localhost:8081/plassb";
+    private String URL_BASE;
     	public PlasSBGateway() {
 		this.httpClient = HttpClient.newHttpClient();
 		this.objectMapper = new ObjectMapper();
         this.planta.setIdplanta(1);
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream("src/main/resources/application.properties")){
+			props.load(fis);
+			this.URL_BASE = props.getProperty("PlasSB.server.urlbase");
+		} catch (Exception e) {
+			e.printStackTrace();
+			//this.URL_BASE = "http://localhost:8080/api/plasSB"; // Valor por defecto en caso de error
+		}
 	}
 
     @Override
