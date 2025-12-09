@@ -1,8 +1,10 @@
 package es.deusto.sd.ecoembes;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.time.LocalDate;
 
 import es.deusto.sd.ecoembes.dao.ContenedorRepository;
 import org.slf4j.Logger;
@@ -73,7 +75,7 @@ public class DataInitializer {
             Calendar cal2 = Calendar.getInstance();
             cal2.set(2025, Calendar.SEPTEMBER, 13, 3, 00);
             Calendar cal3 = Calendar.getInstance();
-            cal3.set(2025, Calendar.APRIL, 14, 3, 00);
+            cal3.set(2025, Calendar.DECEMBER, 9, 3, 00);
             Calendar cal4 = Calendar.getInstance();
             cal4.set(2025, Calendar.JUNE, 15, 3, 00);
 
@@ -106,7 +108,11 @@ public class DataInitializer {
             plantaService.addPlanta(pl1);
             plantaService.addPlanta(pl2);
             //plantaService.addPlanta(pl3);
-
+            ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
+                    new InfoPlanta(pl1, 4.0, cal2.getTime()),
+                    new InfoPlanta(pl1, 3.5, cal3.getTime())
+            ));
+            plantaService.addInfoPlanta(pl1, infoPlanta1);
             /*
             ArrayList<InfoPlanta> infoPlanta1 = new ArrayList<>(List.of(
                     new InfoPlanta(pl1, 1.5, cal.getTime()),

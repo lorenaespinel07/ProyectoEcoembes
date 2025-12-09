@@ -47,20 +47,24 @@ public class PlantaService {
     public Optional<?> getInfoPlantasPorFecha(Date fecha, String token) {
 
         List<PlantaReciclaje> plantas = plantaRepository.findAll();
-
         ArrayList<InfoPlanta> resultado = new ArrayList<>();
         PlantaFactory factory = new PlantaFactory();
+
         for (PlantaReciclaje p : plantas) {
-        	/*
-            p.getHistorial().stream()
-                    .filter(info -> compraraDias(info.getFechaActu(), fecha))
-                    .forEach(resultado::add);
-        	*/
-        	IPlantaGateway gateway = factory.getPlanta(tipoPlanta.valueOf(p.getNombre()));
-        	if (gateway != null) {
-				Optional<InfoPlanta> infoOpt = gateway.getInfoPlantaPorFecha(fecha);
-				infoOpt.ifPresent(resultado::add);
-			}
+            try {
+                tipoPlanta tipo = tipoPlanta.valueOf(p.getNombre());
+                IPlantaGateway gateway = factory.getPlanta(tipo);
+
+                if (gateway != null) {
+                    LocalDate localDate = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    String fechaStr = localDate.toString();
+                    double capacidad = gateway.getCapacidadPlanta(fechaStr);
+                    InfoPlanta info = new InfoPlanta(p, capacidad, fecha);
+                    resultado.add(info);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return Optional.of(resultado);
 	}
@@ -133,28 +137,7 @@ public class PlantaService {
         }
         return new ArrayList<>();
     }
-//    private PlantaFactory plantaFactory; // Asegúrate de tener la factoría inyectada
-//
-//    public void notificarEnvioExterno(String nombrePlanta, Date fecha, double envasesTotales) {
-//        // 1. Convertir fecha
-//        String fechaStr = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString();
-//
-//        // 2. Convertir envases a toneladas (aprox 1000 envases = 1 tonelada, ajusta tu lógica)
-//        double toneladas = envasesTotales / 1000.0;
-//
-//        // 3. Buscar el gateway correcto
-//        PlantaFactory.tipoPlanta tipo = null;
-//        if (nombrePlanta.equalsIgnoreCase("PlasSB Ltd.")) tipo = PlantaFactory.tipoPlanta.PlasSB;
-//        else if (nombrePlanta.equalsIgnoreCase("ContSocket Ltd.")) tipo = PlantaFactory.tipoPlanta.ContSocket;
-//
-//        if (tipo != null) {
-//            IPlantaGateway gateway = plantaFactory.getPlanta(tipo);
-//            if (gateway != null) {
-//                gateway.enviarResiduos(fechaStr, toneladas);
-//                System.out.println("Notificación enviada a " + nombrePlanta);
-//            }
-//        }
-//    }
+
 	public List<PlantaReciclaje> getAllPlantas() {
 		return plantaRepository.findAll();
 	}

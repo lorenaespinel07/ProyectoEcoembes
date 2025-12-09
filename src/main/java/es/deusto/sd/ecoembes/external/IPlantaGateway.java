@@ -7,6 +7,6 @@ import java.util.Optional;
 import es.deusto.sd.ecoembes.entity.InfoPlanta;
 
 public interface IPlantaGateway {
-	public Optional<InfoPlanta> getInfoPlantaPorFecha(Date fecha);
+	public double getCapacidadPlanta(String fecha);
 	public Optional<String> enviarAsignacionPlanta(int numeroContenedores, int cantidadEnvases);
 }

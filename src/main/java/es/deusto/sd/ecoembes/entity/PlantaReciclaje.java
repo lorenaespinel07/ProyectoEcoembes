@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 public class PlantaReciclaje {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     private long idplanta;
 	@Column(nullable = false, unique = true)
 	private String nombre;

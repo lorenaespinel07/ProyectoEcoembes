@@ -83,36 +83,41 @@ public class ContSocketGateway implements IPlantaGateway{
 		return resultado;
 	}
 
-	@Override
-	public Optional<InfoPlanta> getInfoPlantaPorFecha(Date fecha) {
-		String fechaStr = fecha.toString();
-		System.out.println("Fecha a buscar: " + fechaStr);
-		ContSocketGateway contSocketGateway = new ContSocketGateway();
-		String respuesta = contSocketGateway.mandarMensaje("GET INFO"+DELIMITAR + fechaStr);
-		System.out.println("Respuesta recibida: " + respuesta);
-		SimpleDateFormat formato = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-		if (respuesta != null && !respuesta.isEmpty()) {
-			String[] partes = respuesta.split("\n");
-			InfoPlanta infoPlanta = null;
-			//Modelo de datos #id#capacidadActual#fechaActu\n
-			for (String parte : partes) {
-				String[] atributos = parte.split(DELIMITAR);
-				double cantidadReciclada = Double.parseDouble(atributos[2]);
-				try {
-					Date fechaParseada = formato.parse(atributos[3]);
-					infoPlanta = new InfoPlanta(plantaReciclaje, cantidadReciclada, fechaParseada);
-					System.out.println("Fecha parseada: " + fechaParseada);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return Optional.of(infoPlanta);
-		}
-		
-		return Optional.empty();
-	}
+//	@Override
+//	public Optional<InfoPlanta> getInfoPlantaPorFecha(Date fecha) {
+//		String fechaStr = fecha.toString();
+//		System.out.println("Fecha a buscar: " + fechaStr);
+//		ContSocketGateway contSocketGateway = new ContSocketGateway();
+//		String respuesta = contSocketGateway.mandarMensaje("GET INFO"+DELIMITAR + fechaStr);
+//		System.out.println("Respuesta recibida: " + respuesta);
+//		SimpleDateFormat formato = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+//		if (respuesta != null && !respuesta.isEmpty()) {
+//			String[] partes = respuesta.split("\n");
+//			InfoPlanta infoPlanta = null;
+//			//Modelo de datos #id#capacidadActual#fechaActu\n
+//			for (String parte : partes) {
+//				String[] atributos = parte.split(DELIMITAR);
+//				double cantidadReciclada = Double.parseDouble(atributos[2]);
+//				try {
+//					Date fechaParseada = formato.parse(atributos[3]);
+//					infoPlanta = new InfoPlanta(plantaReciclaje, cantidadReciclada, fechaParseada);
+//					System.out.println("Fecha parseada: " + fechaParseada);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			return Optional.of(infoPlanta);
+//		}
+//
+//		return Optional.empty();
+//	}
 
-	@Override
+    @Override
+    public double getCapacidadPlanta(String fecha) {
+        return 0;
+    }
+
+    @Override
 	public Optional<String> enviarAsignacionPlanta(int numeroContenedores, int cantidadEnvases) {
 		ContSocketGateway contSocketGateway = new ContSocketGateway();
 		String respuesta = contSocketGateway.mandarMensaje("ASIGNAR"+DELIMITAR+ numeroContenedores + DELIMITAR + cantidadEnvases);

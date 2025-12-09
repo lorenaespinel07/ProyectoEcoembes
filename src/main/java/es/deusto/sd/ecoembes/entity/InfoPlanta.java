@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 public class InfoPlanta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
+    @JsonIgnore
     private Long id;
     //Aqui hay dos logicas
 	//1. InfoContendor contiene el id del contenedor referenciado
@@ -23,6 +23,12 @@ public class InfoPlanta {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaActu;
 
+    public Long getPlantaId() {
+        if (this.planta != null) {
+            return this.planta.getIdplanta();
+        }
+        return null;
+    }
 
     public Long getId() {
         return id;
