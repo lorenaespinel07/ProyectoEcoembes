@@ -110,9 +110,9 @@ public class ContenedorController {
         LocalDate fechaFin = LocalDate.parse(textoFechaFin);
 
         Calendar calIni = Calendar.getInstance();
-        calIni.set(fechaIni.getYear(), fechaIni.getMonthValue(), fechaIni.getDayOfMonth());
+        calIni.set(fechaIni.getYear(), fechaIni.getMonthValue()-1, fechaIni.getDayOfMonth());
         Calendar calFin = Calendar.getInstance();
-        calFin.set(fechaFin.getYear(), fechaFin.getMonthValue(), fechaFin.getDayOfMonth());
+        calFin.set(fechaFin.getYear(), fechaFin.getMonthValue()-1, fechaFin.getDayOfMonth());
 
         Optional<?> infoContenedor = contenedorService.getInfoContendorPorFecha(id,
                 calIni.getTime(), calFin.getTime(), token);
@@ -146,7 +146,7 @@ public class ContenedorController {
         LocalDate fechaLocal = LocalDate.parse(textoFecha);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue(), fechaLocal.getDayOfMonth());
+        cal.set(fechaLocal.getYear(), fechaLocal.getMonthValue()-1, fechaLocal.getDayOfMonth());
 
         Optional<?> infoContenedor = contenedorService.getInfoContenedorPorZona(cp, cal.getTime(),token);
 

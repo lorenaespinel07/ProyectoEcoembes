@@ -26,7 +26,7 @@ public class PlasSBGateway implements IPlantaGateway{
 	private final ObjectMapper objectMapper;
 	private final PlantaReciclaje planta = new PlantaReciclaje("PlasSB Ltd.", 2);
     private String URL_BASE;
-    	public PlasSBGateway() {
+    public PlasSBGateway() {
 		this.httpClient = HttpClient.newHttpClient();
 		this.objectMapper = new ObjectMapper();
         this.planta.setIdplanta(1);
